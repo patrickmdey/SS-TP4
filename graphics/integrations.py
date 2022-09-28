@@ -21,10 +21,11 @@ out_file.close()
 
 labels = ["Verlet", "Beeman", "Gear Predictor Corrector"]
 styles = ['-', '--', '--']
+colors = ['red', 'blue', 'green']
 for i in range(len(labels)):
     x = [n[0] for n in values[i]]
     y = [n[1] for n in values[i]]
-    plt.plot(x, y, label=labels[i], linestyle=styles[i])
+    plt.plot(x, y, label=labels[i], linestyle=styles[i], c=colors[i] )
 
 plt.legend()
 plt.show()

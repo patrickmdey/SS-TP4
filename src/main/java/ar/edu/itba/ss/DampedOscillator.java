@@ -3,12 +3,12 @@ package main.java.ar.edu.itba.ss;
 import javax.rmi.CORBA.Util;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class DampedOscillator {
     private static final double A = 0.1; // TODO: preguntar
     private static final double EPSILON = 1 * Math.pow(10, -5);
-
     private final double mass;
     private final double k;
     private final double gamma;
@@ -87,10 +87,54 @@ public class DampedOscillator {
             t += step;
             writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
         }
-        writer.write(" \n");
+        writer.write("\n");
         writer.flush();
 
 //        writer.close();
+    }
+
+    public void gear() throws IOException {
+
+        double[] alphas = new double[]{3.0 / 16, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
+
+//        double currR = r0;
+//        double prevR = Utils.eulerR(r0, v0, -step, mass, f(r0, v0));
+//
+//        double currV = v0;
+//        double prevV = Utils.eulerV(v0, -step, mass, f(r0, v0));
+
+        double t = 0;
+
+        writer.write(String.format(Locale.ROOT, "%f %f\n", t, r0));
+        double currA;
+
+        double[] r = new double[6];
+        r[0] = r0;
+        r[1] = v0;
+        r[2] = f(r[0], r[1]) / mass;
+        r[3] = f(r[1], r[2]) / mass;
+        r[4] = f(r[2], r[3]) / mass;
+        r[5] = f(r[3], r[4]) / mass;
+
+
+        while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
+            // Predecir
+            Utils.gearPredR(r, step);
+
+            // Evaluar
+            currA = f(r[0], r[1]) / mass;
+            double deltaA = currA - r[2];
+            double deltaR2 = deltaA * Math.pow(step, 2) / 2;
+
+            // Corregir
+            Utils.gearCorrectR(alphas, r, deltaR2, step);
+
+            t += step;
+            writer.write(String.format(Locale.ROOT, "%f %f\n", t, r[0]));
+        }
+
+        writer.write("\n");
+        writer.flush();
     }
 
     private double f(double r, double v) {
