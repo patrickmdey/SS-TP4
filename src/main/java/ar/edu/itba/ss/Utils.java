@@ -12,7 +12,7 @@ public class Utils {
     }
 
     public static double verletR(double currR, double prevR, double step, double mass, double f) {
-        return 2 * currR - prevR + (Math.pow(step, 2) / mass) * f;
+        return 2 * currR - prevR + (Math.pow(step, 2) * f )/ mass;
     }
 
     public static double beemanR(double r, double v, double step, double currA, double prevA) {

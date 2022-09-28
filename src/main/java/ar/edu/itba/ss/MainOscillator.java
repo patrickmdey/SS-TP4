@@ -8,11 +8,14 @@ public class MainOscillator {
         double mass = 70 * Math.pow(10, 3);
         double k = Math.pow(10, 4);
         double gamma = 100 * Math.pow(10, 3);
-        double step = 1;
+        double step = 0.01;
 
-        DampedOscillator oscillator = new DampedOscillator(mass, k, gamma, step);
+
+        FileWriter writer = new FileWriter("out.txt");
+        DampedOscillator oscillator = new DampedOscillator(mass, k, gamma, step, writer);
 
         oscillator.verlet();
         oscillator.beeman();
+        writer.close();
     }
 }

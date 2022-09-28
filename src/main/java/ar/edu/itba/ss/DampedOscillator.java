@@ -3,27 +3,28 @@ package main.java.ar.edu.itba.ss;
 import javax.rmi.CORBA.Util;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Locale;
 
 public class DampedOscillator {
-    private double mass;
-    private double k;
-    private double gamma;
-    private double r0;
-    private double v0;
-    private static double A = 0.1; // TODO: preguntar
-
-    private double step;
+    private static final double A = 0.1; // TODO: preguntar
     private static final double EPSILON = 1 * Math.pow(10, -5);
-    private FileWriter writer;
 
-    public DampedOscillator(double mass, double k, double gamma, double step) throws IOException {
+    private final double mass;
+    private final double k;
+    private final double gamma;
+    private final double r0;
+    private final double v0;
+    private final double step;
+    private final FileWriter writer;
+
+    public DampedOscillator(double mass, double k, double gamma, double step, FileWriter writer) throws IOException {
         this.mass = mass;
         this.k = k;
         this.gamma = gamma;
         this.r0 = 1;
         this.v0 = -A * gamma / (2 * mass);
         this.step = step;
-        writer = new FileWriter("verlet.txt");
+        this.writer = writer;
     }
 
     public void analitic(double t) {
@@ -43,15 +44,17 @@ public class DampedOscillator {
         double nextR;
         double currV = v0;
 
-        writer.write(String.format("%f %f\n", t, currR));
-        while (Double.compare(Math.abs(t - 5), EPSILON) < 0) {
+        writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
+        while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
             nextR = Utils.verletR(currR, prevR, step, mass, f(currR, currV));
-            currV = (nextR - prevR) / 2 * step; // TODO capaz pasarla a utils
+            currV = (nextR - prevR) / (2 * step); // TODO capaz pasarla a utils
             prevR = currR;
             currR = nextR;
             t += step;
-            writer.write(String.format("%f %f\n", t, currR));
+            writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
         }
+        writer.write("\n");
+        writer.flush();
     }
 
     public void beeman() throws IOException {
@@ -62,9 +65,9 @@ public class DampedOscillator {
 
         double t = 0;
 
-        writer.write(String.format("%f %f\n", t, currR));
+        writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
         double nextR, nextV, currA, prevA, nextA;
-        while (Double.compare(Math.abs(t - 5), EPSILON) < 0) {
+        while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
 
             currA = f(currR, currV) / mass;
             prevA = f(prevR, prevV) / mass;
@@ -82,8 +85,12 @@ public class DampedOscillator {
             prevV = currV;
             currV = nextV;
             t += step;
-            writer.write(String.format("%f %f\n", t, currR));
+            writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
         }
+        writer.write(" \n");
+        writer.flush();
+
+//        writer.close();
     }
 
     private double f(double r, double v) {
