@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 public class DampedOscillator {
-    private static final double A = 0.1; // TODO: preguntar
+    private static final double A = 1;
     private static final double EPSILON = 1 * Math.pow(10, -5);
     private final double mass;
     private final double k;
@@ -27,11 +27,18 @@ public class DampedOscillator {
         this.writer = writer;
     }
 
-    public void analitic(double t) {
-        double r;
-        while (Double.compare(Math.abs(t - 5), EPSILON) < 0) {
-            r = A * Math.exp(-(gamma / (2 * mass) * t)) * Math.cos(Math.pow(((k / mass) - (gamma * gamma / (4 * mass * mass))), 0.5) * t);
+    public void analitic() throws IOException {
+        double currR = r0;
+        double t = 0;
+        writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
+        while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
+            currR = A * Math.exp(-(gamma * t / (2 * mass))) * Math.cos(
+                Math.sqrt((k / mass) - (Math.pow(gamma, 2) / (4 * Math.pow(mass, 2)))) * t);
+            t += step;
+            writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
         }
+        writer.write("\n");
+        writer.flush();
     }
 
     public void verlet() throws IOException {

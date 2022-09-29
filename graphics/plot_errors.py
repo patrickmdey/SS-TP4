@@ -1,0 +1,24 @@
+import matplotlib.pyplot as plt
+
+errors = [[], [], []]
+steps = []
+
+# TODO: Capaz promediar y hacer barras de error
+with open("../error.txt", "r") as error_file:
+    line = error_file.readline()
+    while line:
+        steps.append(float(line))
+        for i in range(len(errors)):
+            errors[i].append(float(line))
+            line = error_file.readline()
+        
+        error_file.readline()
+        line = error_file.readline()
+
+error_file.close()
+
+for i in range(len(errors)):
+    plt.plot(errors[i], label="Error {}".format(i))
+
+plt.legend()
+plt.show()

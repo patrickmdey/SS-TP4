@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-values = [[], [], []]
+values = [[], [], [], []]
 
 with open("../out.txt", "r") as out_file:
     idx = 0
@@ -10,7 +10,6 @@ with open("../out.txt", "r") as out_file:
             print("idx: ", idx)
             continue
 
-
         parts = [float(n) for n in line.split()]
         if len(parts) == 0:
             continue
@@ -19,13 +18,17 @@ with open("../out.txt", "r") as out_file:
         values[idx].append(parts)
 out_file.close()
 
-labels = ["Verlet", "Beeman", "Gear Predictor Corrector"]
-styles = ['-', '--', '--']
-colors = ['red', 'blue', 'green']
+labels = ["Analitic", "Verlet", "Beeman", "Gear Predictor Corrector"]
+styles = ['solid', 'dashed', 'dashdot', 'dotted']
+colors = ['red', 'blue', 'green', 'pink']
+
+analitic_y = [n[1] for n in values[0]]
 for i in range(len(labels)):
     x = [n[0] for n in values[i]]
     y = [n[1] for n in values[i]]
-    plt.plot(x, y, label=labels[i], linestyle=styles[i], c=colors[i] )
+    plt.plot(x, y, label=labels[i], linestyle=styles[i], c=colors[i])
 
 plt.legend()
 plt.show()
+
+
