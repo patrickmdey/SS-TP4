@@ -13,8 +13,6 @@ with open("../out.txt", "r") as out_file:
         parts = [float(n) for n in line.split()]
         if len(parts) == 0:
             continue
-
-        print(parts)
         values[idx].append(parts)
 out_file.close()
 
