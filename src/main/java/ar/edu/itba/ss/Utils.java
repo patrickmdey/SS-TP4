@@ -6,7 +6,6 @@ public class Utils {
         return r + step * v + step * step * f / (2 * mass);
     }
 
-    // TODO: parece que no se usa
     public static double eulerV(double v, double step, double mass, double f) {
         return v + (step * f) / mass;
     }

@@ -13,7 +13,6 @@ public class MainOscillator {
         FileWriter writer = new FileWriter("out.txt");
         DampedOscillator oscillator = new DampedOscillator(mass, k, gamma, step, writer);
 
-        oscillator.analitic();
         oscillator.verlet();
         oscillator.beeman();
         oscillator.gear();

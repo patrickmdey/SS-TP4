@@ -1,10 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from analytic import calculateR
+
 values = [[], [], [], []]
 
 with open("../out.txt", "r") as out_file:
-    idx = 0
+    idx = 1
     for line in out_file:
         if line == '\n':
             idx += 1
@@ -21,7 +23,7 @@ labels = ["Analitic", "Verlet", "Beeman", "Gear Predictor Corrector"]
 styles = ['solid', 'dashed', 'dashdot', 'dotted']
 colors = ['red', 'blue', 'green', 'pink']
 
-analitic_y = [n[1] for n in values[0]]
+values[0] = [[n[0], calculateR(n[0])] for n in values[1]]
 for i in range(len(labels)):
     x = [n[0] for n in values[i]]
     y = [n[1] for n in values[i]]

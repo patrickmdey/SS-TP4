@@ -1,14 +1,12 @@
 package main.java.ar.edu.itba.ss;
 
-import javax.rmi.CORBA.Util;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Locale;
 
 public class DampedOscillator {
     private static final double A = 1;
-    private static final double EPSILON = 1 * Math.pow(10, -5);
+    private static final double EPSILON = 1 * Math.pow(10, -2);
     private final double mass;
     private final double k;
     private final double gamma;
@@ -27,20 +25,6 @@ public class DampedOscillator {
         this.writer = writer;
     }
 
-    public void analitic() throws IOException {
-        double currR = r0;
-        double t = 0;
-        writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
-        while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
-            currR = A * Math.exp(-(gamma * t / (2 * mass))) * Math.cos(
-                Math.sqrt((k / mass) - (Math.pow(gamma, 2) / (4 * Math.pow(mass, 2)))) * t);
-            t += step;
-            writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
-        }
-        writer.write("\n");
-        writer.flush();
-    }
-
     public void verlet() throws IOException {
         double currR = r0;
 
@@ -51,14 +35,14 @@ public class DampedOscillator {
         double nextR;
         double currV = v0;
 
-        writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
-        while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
+        writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, currR));
+        while (Double.compare(t,  5) > 0) {
             nextR = Utils.verletR(currR, prevR, step, mass, f(currR, currV));
             currV = (nextR - prevR) / (2 * step); // TODO capaz pasarla a utils
             prevR = currR;
             currR = nextR;
             t += step;
-            writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
+            writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, currR));
         }
         writer.write("\n");
         writer.flush();
@@ -72,7 +56,7 @@ public class DampedOscillator {
 
         double t = 0;
 
-        writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
+        writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, currR));
         double nextR, nextV, currA, prevA, nextA;
         while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
 
@@ -92,7 +76,7 @@ public class DampedOscillator {
             prevV = currV;
             currV = nextV;
             t += step;
-            writer.write(String.format(Locale.ROOT, "%f %f\n", t, currR));
+            writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, currR));
         }
         writer.write("\n");
         writer.flush();
@@ -104,15 +88,9 @@ public class DampedOscillator {
 
         double[] alphas = new double[]{3.0 / 16, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
 
-//        double currR = r0;
-//        double prevR = Utils.eulerR(r0, v0, -step, mass, f(r0, v0));
-//
-//        double currV = v0;
-//        double prevV = Utils.eulerV(v0, -step, mass, f(r0, v0));
-
         double t = 0;
 
-        writer.write(String.format(Locale.ROOT, "%f %f\n", t, r0));
+        writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, r0));
         double currA;
 
         double[] r = new double[6];
@@ -137,7 +115,7 @@ public class DampedOscillator {
             Utils.gearCorrectR(alphas, r, deltaR2, step);
 
             t += step;
-            writer.write(String.format(Locale.ROOT, "%f %f\n", t, r[0]));
+            writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, r[0]));
         }
 
         writer.write("\n");
