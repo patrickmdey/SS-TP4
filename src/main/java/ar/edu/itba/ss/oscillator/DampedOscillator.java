@@ -1,4 +1,6 @@
-package main.java.ar.edu.itba.ss;
+package main.java.ar.edu.itba.ss.oscillator;
+
+import main.java.ar.edu.itba.ss.utils.Utils;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,7 +38,7 @@ public class DampedOscillator {
         double currV = v0;
 
         writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, currR));
-        while (Double.compare(t,  5) > 0) {
+        while (t < 5) {
             nextR = Utils.verletR(currR, prevR, step, mass, f(currR, currV));
             currV = (nextR - prevR) / (2 * step); // TODO capaz pasarla a utils
             prevR = currR;
@@ -58,7 +60,7 @@ public class DampedOscillator {
 
         writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, currR));
         double nextR, nextV, currA, prevA, nextA;
-        while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
+        while (t < 5) {
 
             currA = f(currR, currV) / mass;
             prevA = f(prevR, prevV) / mass;
@@ -102,7 +104,7 @@ public class DampedOscillator {
         r[5] = f(r[3], r[4]) / mass;
 
 
-        while (Double.compare(Math.abs(t - 5), EPSILON) > 0) {
+        while (t < 5) {
             // Predecir
             Utils.gearPredR(r, step);
 

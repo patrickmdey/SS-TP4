@@ -1,5 +1,7 @@
 package main.java.ar.edu.itba.ss;
 
+import main.java.ar.edu.itba.ss.oscillator.DampedOscillator;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -14,8 +16,11 @@ public class MainOscillator {
         DampedOscillator oscillator = new DampedOscillator(mass, k, gamma, step, writer);
 
         oscillator.verlet();
+        System.out.println("finished verlet");
         oscillator.beeman();
+        System.out.println("finished beeman");
         oscillator.gear();
+        System.out.println("finished gear");
         writer.close();
     }
 }
