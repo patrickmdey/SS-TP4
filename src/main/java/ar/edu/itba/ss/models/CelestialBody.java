@@ -4,20 +4,25 @@ import java.util.List;
 
 public class CelestialBody {
 
-    private static final double GRAVITY = 6.693 * Math.pow(10,-11);
+    private static final double GRAVITY = 6.693 * Math.pow(10, -11);
     private final String name;
     private final Point position;
     private final double radius;
     private final double mass;
-
     private final double orbitalSpeed;
 
-    public CelestialBody(String name, Point position, double radius, double mass, double orbitalSpeed) {
+    private double vx;
+
+    private double vy;
+
+    public CelestialBody(String name, Point position, double vx, double vy, double radius, double mass, double orbitalSpeed) {
         this.name = name;
         this.position = position;
         this.radius = radius;
         this.mass = mass;
         this.orbitalSpeed = orbitalSpeed;
+        this.vx = vx;
+        this.vy = vy;
     }
 
     public double[] gravityForceWith(CelestialBody other) {
@@ -46,5 +51,29 @@ public class CelestialBody {
 
     public String getName() {
         return name;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public Point getPosition() {
+        return position;
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public double getOrbitalSpeed() {
+        return orbitalSpeed;
+    }
+
+    public double getVx() {
+        return vx;
+    }
+
+    public double getVy() {
+        return vy;
     }
 }
