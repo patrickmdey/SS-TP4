@@ -3,3 +3,4 @@ out.txt
 out
 error.txt
 analytic.cpython-39.pyc
+*.iml
