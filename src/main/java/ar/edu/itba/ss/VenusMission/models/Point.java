@@ -1,4 +1,4 @@
-package main.java.ar.edu.itba.ss.models;
+package main.java.ar.edu.itba.ss.VenusMission.models;
 
 
 public class Point {
@@ -27,6 +27,11 @@ public class Point {
     }
 
     public void setY(double y) {
+        this.y = y;
+    }
+
+    public void update(double x, double y) {
+        this.x = x;
         this.y = y;
     }
 }

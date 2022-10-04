@@ -1,6 +1,6 @@
 package main.java.ar.edu.itba.ss.utils;
 
-public class Utils {
+public class IntegrationAlgorithms {
 
     public static double eulerR(double r, double v, double step, double mass, double f) {
         return r + step * v + step * step * f / (2 * mass);

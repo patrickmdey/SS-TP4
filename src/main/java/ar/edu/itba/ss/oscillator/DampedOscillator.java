@@ -1,6 +1,6 @@
 package main.java.ar.edu.itba.ss.oscillator;
 
-import main.java.ar.edu.itba.ss.utils.Utils;
+import main.java.ar.edu.itba.ss.utils.IntegrationAlgorithms;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class DampedOscillator {
     public void verlet() throws IOException {
         double currR = r0;
 
-        double prevR = Utils.eulerR(r0, v0, -step, mass, f(r0, v0));
+        double prevR = IntegrationAlgorithms.eulerR(r0, v0, -step, mass, f(r0, v0));
 
         double t = 0;
 
@@ -39,7 +39,7 @@ public class DampedOscillator {
 
         writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, currR));
         while (t < 5) {
-            nextR = Utils.verletR(currR, prevR, step, mass, f(currR, currV));
+            nextR = IntegrationAlgorithms.verletR(currR, prevR, step, mass, f(currR, currV));
             currV = (nextR - prevR) / (2 * step); // TODO capaz pasarla a utils
             prevR = currR;
             currR = nextR;
@@ -53,8 +53,8 @@ public class DampedOscillator {
     public void beeman() throws IOException {
         double currR = r0;
         double currV = v0;
-        double prevR = Utils.eulerR(r0, v0, -step, mass, f(r0, v0));
-        double prevV = Utils.eulerV(v0, -step, mass, f(r0, v0));
+        double prevR = IntegrationAlgorithms.eulerR(r0, v0, -step, mass, f(r0, v0));
+        double prevV = IntegrationAlgorithms.eulerV(v0, -step, mass, f(r0, v0));
 
         double t = 0;
 
@@ -65,13 +65,13 @@ public class DampedOscillator {
             currA = f(currR, currV) / mass;
             prevA = f(prevR, prevV) / mass;
 
-            nextR = Utils.beemanR(currR, currV, step, currA, prevA);
+            nextR = IntegrationAlgorithms.beemanR(currR, currV, step, currA, prevA);
 
-            double predV = Utils.beemanPredV(currV, step, currA, prevA);
+            double predV = IntegrationAlgorithms.beemanPredV(currV, step, currA, prevA);
 
             nextA = f(nextR, predV) / mass;
 
-            nextV = Utils.beemanV(currV, step, currA, prevA, nextA); //TODO: next A como se calcula? ver si se usa predV
+            nextV = IntegrationAlgorithms.beemanV(currV, step, currA, prevA, nextA); //TODO: next A como se calcula? ver si se usa predV
             prevR = currR;
             currR = nextR;
 
@@ -106,7 +106,7 @@ public class DampedOscillator {
 
         while (t < 5) {
             // Predecir
-            Utils.gearPredR(r, step);
+            IntegrationAlgorithms.gearPredR(r, step);
 
             // Evaluar
             currA = f(r[0], r[1]) / mass;
@@ -114,7 +114,7 @@ public class DampedOscillator {
             double deltaR2 = deltaA * Math.pow(step, 2) / 2;
 
             // Corregir
-            Utils.gearCorrectR(alphas, r, deltaR2, step);
+            IntegrationAlgorithms.gearCorrectR(alphas, r, deltaR2, step);
 
             t += step;
             writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, r[0]));

@@ -1,21 +1,21 @@
-package main.java.ar.edu.itba.ss.models;
+package main.java.ar.edu.itba.ss.VenusMission.models;
 
 import java.util.List;
 
 public class CelestialBody {
-
+    private static int SEQ = 0;
     private static final double GRAVITY = 6.693 * Math.pow(10, -11);
     private final String name;
+    private final int id;
     private final Point position;
     private final double radius;
     private final double mass;
     private final double orbitalSpeed;
-
     private double vx;
-
     private double vy;
 
     public CelestialBody(String name, Point position, double vx, double vy, double radius, double mass, double orbitalSpeed) {
+        this.id = SEQ++;
         this.name = name;
         this.position = position;
         this.radius = radius;
@@ -26,12 +26,13 @@ public class CelestialBody {
     }
 
     public double[] gravityForceWith(CelestialBody other) {
-        double[] direction = new double[]{other.position.getX() - position.getX(), other.position.getY() - position.getY()};
-        double distance = position.distanceTo(other.position);
+        double[] direction = new double[]{other.getPosition().getX() - position.getX(),
+                other.getPosition().getY() - position.getY()};
+        double distance = position.distanceTo(other.getPosition());
         direction[0] /= distance;
         direction[1] /= distance;
 
-        double force = GRAVITY * (mass * other.mass) / Math.pow(distance, 2);
+        double force = GRAVITY * (mass * other.getMass()) / Math.pow(distance, 2);
         return new double[]{force * direction[0], force * direction[1]};
     }
 
@@ -42,11 +43,16 @@ public class CelestialBody {
         for (CelestialBody other : bodies) {
             double[] f = gravityForceWith(other);
 
-            totX += (f[0] * (other.position.getX() - position.getX())) / Math.abs(radius - other.radius); //TODO: radio o distancia?
-            totY += (f[1] * (other.position.getY() - position.getY())) / Math.abs(radius - other.radius);
+            totX += f[0];//(f[0] * (other.position.getX() - position.getX())) / Math.abs(radius - other.radius); //TODO: radio o distancia?
+            totY += f[1];//(f[1] * (other.position.getY() - position.getY())) / Math.abs(radius - other.radius);
         }
 
         return new double[]{totX, totY};
+    }
+
+    public void updateVelocity(double vx, double vy){
+        this.vx = vx;
+        this.vy = vy;
     }
 
     public String getName() {
@@ -75,5 +81,9 @@ public class CelestialBody {
 
     public double getVy() {
         return vy;
+    }
+
+    public int getId() {
+        return id;
     }
 }
