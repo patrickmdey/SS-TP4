@@ -3,8 +3,7 @@ package main.java.ar.edu.itba.ss.VenusMission.models;
 import java.util.List;
 
 public class CelestialBody {
-    private static int SEQ = 0;
-    private static final double GRAVITY = 6.693 * Math.pow(10, -11) / Math.pow(10,9);
+    private static final double GRAVITY = 6.693 * Math.pow(10, -2);
     private final String name;
     private final int id;
     private final Point position;
@@ -43,10 +42,9 @@ public class CelestialBody {
         for (CelestialBody other : bodies) {
             double[] f = gravityForceWith(other);
 
-            totX += f[0];//(f[0] * (other.position.getX() - position.getX())) / Math.abs(radius - other.radius); //TODO: radio o distancia?
-            totY += f[1];//(f[1] * (other.position.getY() - position.getY())) / Math.abs(radius - other.radius);
+            totX += f[0];
+            totY += f[1];
         }
-
         return new double[]{totX, totY};
     }
 
