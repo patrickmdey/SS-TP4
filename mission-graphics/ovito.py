@@ -7,15 +7,18 @@ with open("../mission_out.txt", "r") as mission_file:
             ovito_file.write("{}\n\n".format(count))
             for i in range(count):
                 [id, x, y, vx, vy, r] = mission_file.readline().split(",")
+
                 if i == 0:
-                    r = float(r) * 1000
+                    scalated_r = float(r)
+                elif i == 3:
+                    scalated_r = 103100
                 else:
-                    r = float(r) * 100000
+                    scalated_r = float(r) * 35
 
-                x = float(x) / 1000
-                y = float(y) / 1000
+                x = float(x)/15
+                y = float(y)/15
 
-                ovito_file.write("{}, {}, {}, {}, {}, {}\n".format(id, x, y, vx, vy, r))
+                ovito_file.write("{}, {}, {}, {}, {}, {}\n".format(id, x, y, vx, vy, scalated_r))
             line = mission_file.readline()
 
     ovito_file.close()

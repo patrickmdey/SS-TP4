@@ -1,11 +1,9 @@
 package main.java.ar.edu.itba.ss;
 
-import javafx.geometry.Pos;
 import main.java.ar.edu.itba.ss.VenusMission.models.CelestialBody;
 import main.java.ar.edu.itba.ss.VenusMission.models.Point;
 import main.java.ar.edu.itba.ss.utils.IntegrationAlgorithms;
 
-import javax.swing.text.Position;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -21,7 +19,7 @@ public class MissionMain {
     public static void main(String[] args) {
         CelestialBody sun = null, earth = null, venus = null;
         long minIter = Integer.MAX_VALUE;
-        sun = new CelestialBody("Sun", new Point(0, 0), 0, 0, 6.9551 * Math.pow(10, 5), 1988500 * Math.pow(10, 24), 0);
+        sun = new CelestialBody(0, "Sun", new Point(0, 0), 0, 0, 6.9551 * Math.pow(10, 5), 1988500 * Math.pow(10, 24), 0);
 
         double earthX = 0, earthY = 0, earthVx = 0, earthVy = 0;
         double venusX = 0, venusY = 0, venusVx = 0, venusVy = 0;
@@ -32,13 +30,13 @@ public class MissionMain {
             venusScanner.nextLine();
             //Read line
             while (earthScanner.hasNextLine() && venusScanner.hasNextLine()) {
-                String line = earthScanner.nextLine();
-                String venusLine = earthScanner.nextLine();
+                String earthLine = earthScanner.nextLine();
+                String venusLine = venusScanner.nextLine();
                 //Scan the line for tokens
-                try (Scanner earthRowScanner = new Scanner(line); Scanner venusRowScanner = new Scanner(venusLine)) {
+                try (Scanner earthRowScanner = new Scanner(earthLine); Scanner venusRowScanner = new Scanner(venusLine)) {
                     earthRowScanner.useDelimiter(",");
                     venusRowScanner.useDelimiter(",");
-                    for (int i = 0; earthRowScanner.hasNext(); i++) {
+                    for (int i = 0; earthRowScanner.hasNext() && venusRowScanner.hasNext(); i++) {
                         String earthPart = earthRowScanner.next();
                         String venusPart = venusRowScanner.next();
 
@@ -66,9 +64,9 @@ public class MissionMain {
                         }
                     }
                 }
-                earth = new CelestialBody("Earth", new Point(earthX, earthY), earthVx, earthVy,
+                earth = new CelestialBody(1,"Earth", new Point(earthX, earthY), earthVx, earthVy,
                         6378.137, 5.97219 * Math.pow(10, 24), 29.79);
-                venus = new CelestialBody("Venus", new Point(venusX, venusY), venusVx, venusVy,
+                venus = new CelestialBody(2, "Venus", new Point(venusX, venusY), venusVx, venusVy,
                         6051.893, 48.685 * Math.pow(10, 23), 35.021);
 
 
@@ -90,7 +88,7 @@ public class MissionMain {
                 double vx = (Math.signum(earth.getVx()) * Math.abs(Math.sin(theta) * (7.12 + 8))) + earth.getVx();
                 double vy = (Math.signum(earth.getVy()) * Math.abs(Math.cos(theta) * (7.12 + 8))) + earth.getVy();
 
-                CelestialBody spaceship = new CelestialBody("Spaceship", new Point(x, y), vx, vy, 0,
+                CelestialBody spaceship = new CelestialBody(3,"Spaceship", new Point(x, y), vx, vy, 0,
                         2 * Math.pow(10, 5), 0);
 
                 List<CelestialBody> celestialBodies = new ArrayList<>(Arrays.asList(sun, earth, venus, spaceship));
@@ -108,8 +106,10 @@ public class MissionMain {
                     rx[i][1] = body.getVx();
                     ry[i][1] = body.getVy();
 
-                    rx[i][2] = 0;
-                    ry[i][2] = 0;
+                    double[] forces = body.totalGravitationalForces(celestialBodies.stream().filter(b -> b != body).collect(Collectors.toList()));
+
+                    rx[i][2] = forces[0] / body.getMass();
+                    ry[i][2] = forces[1] / body.getMass();
 
                     rx[i][3] = 0;
                     ry[i][3] = 0;

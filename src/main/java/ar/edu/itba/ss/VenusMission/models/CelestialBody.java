@@ -4,7 +4,7 @@ import java.util.List;
 
 public class CelestialBody {
     private static int SEQ = 0;
-    private static final double GRAVITY = 6.693 * Math.pow(10, -11);
+    private static final double GRAVITY = 6.693 * Math.pow(10, -11) / Math.pow(10,9);
     private final String name;
     private final int id;
     private final Point position;
@@ -14,8 +14,8 @@ public class CelestialBody {
     private double vx;
     private double vy;
 
-    public CelestialBody(String name, Point position, double vx, double vy, double radius, double mass, double orbitalSpeed) {
-        this.id = SEQ++;
+    public CelestialBody(int id, String name, Point position, double vx, double vy, double radius, double mass, double orbitalSpeed) {
+        this.id = id;
         this.name = name;
         this.position = position;
         this.radius = radius;
