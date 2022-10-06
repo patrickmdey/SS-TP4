@@ -91,10 +91,11 @@ public class MissionMain {
                 double y = Math.sin(theta) * spaceshipDistanceToSun;
 
                 // Pasamos de tangencial a cartesiano
-                double vx = (Math.signum(earth.getVx()) * Math.abs(Math.sin(theta)
-                        * (earthOrbitSpeed + takeOffSpeed))) + earth.getVx();
-                double vy = -(Math.signum(earth.getVy()) * Math.abs(Math.cos(theta)
-                        * (earthOrbitSpeed + takeOffSpeed))) + earth.getVy();
+                double vOrb = Math.sqrt(Math.pow(earth.getVx(), 2) + Math.pow(earth.getVy(), 2));
+                double vOrbTot = vOrb - takeOffSpeed - earthOrbitSpeed;
+
+                double vx = -Math.sin(theta) * vOrbTot;
+                double vy = Math.cos(theta) * vOrbTot;
 
                 CelestialBody spaceship = new CelestialBody(3, "Spaceship", new Point(x, y), vx,
                         vy, 0, 2 * Math.pow(10, 5), 0);

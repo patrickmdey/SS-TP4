@@ -9,11 +9,11 @@ with open("../mission_out.txt", "r") as mission_file:
                 [id, x, y, vx, vy, r] = mission_file.readline().split(",")
 
                 if i == 0:
-                    scalated_r = float(r) * 1.6
+                    scalated_r = float(r)
                 elif i == 3:
-                    scalated_r = 180000
+                    scalated_r = 70000
                 else:
-                    scalated_r = float(r) * 110
+                    scalated_r = float(r) * 35
 
                 x = float(x)/15
                 y = float(y)/15
