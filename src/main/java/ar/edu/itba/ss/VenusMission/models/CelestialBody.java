@@ -3,7 +3,7 @@ package main.java.ar.edu.itba.ss.VenusMission.models;
 import java.util.List;
 
 public class CelestialBody {
-    private static final double GRAVITY = 6.693 * Math.pow(10, -2);
+    private static final double GRAVITY = 6.693 * Math.pow(10, -20);
     private final String name;
     private final int id;
     private final Point position;
