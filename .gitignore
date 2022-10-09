@@ -8,3 +8,4 @@ analytic.cpython-39.pyc
 ovito.txt
 mission_out.txt
 *.png
+*.DS_Store
