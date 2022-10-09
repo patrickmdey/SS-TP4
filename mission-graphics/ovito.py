@@ -2,6 +2,8 @@ with open("../mission_out.txt", "r") as mission_file:
     with open("../ovito.txt", "w") as ovito_file:
         line = mission_file.readline()
         while line:
+            if not line[:-1].isnumeric():
+                line = mission_file.readline()
             count = int(line)
             mission_file.readline()
             ovito_file.write("{}\n\n".format(count))

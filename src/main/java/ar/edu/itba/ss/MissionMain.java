@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,7 +99,7 @@ public class MissionMain {
 
                     CelestialBody spaceship = launchSpaceship(earth);
 
-                    simulateSpaceship(sun, earth, venus, spaceship);
+                    simulateSpaceship(sun, earth, venus, spaceship, day);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -190,7 +192,9 @@ public class MissionMain {
      * Simulates the spaceship orbiting the sun
      */
     public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody venus,
-                                         CelestialBody spaceship) {
+                                         CelestialBody spaceship, int offset) {
+        LocalDate date = LocalDate.of(2022, Month.SEPTEMBER, 23);
+        date = date.plusDays(offset);
         long minIter = Integer.MAX_VALUE;//695700
         long iter = 0;
 
@@ -203,6 +207,7 @@ public class MissionMain {
         initializeRs(rx, ry, celestialBodies);
 
         try (FileWriter outFile = new FileWriter("mission_out.txt", hasToAppend)) {
+            outFile.write(date + "\n");
             hasToAppend = true;
             //while (venus.getPosition().distanceTo(spaceship.getPosition()) > venus.getRadius() + spaceship.getRadius() + 1200 && iter < 1000000) {
             for (int day = 0; day < DATES_TO_TRY; day++) {
@@ -271,7 +276,7 @@ public class MissionMain {
                     outFile.flush();
                     iter++;
                 }
-                System.out.println("Min dist: " + minDist + " at iter: " + minIter);
+                //System.out.println("Min dist: " + minDist + " at iter: " + minIter);
             }
 //                    outFile.write("\n"); // TODO: Ver como separamos condiciones iniciales
         } catch (IOException e) {
