@@ -5,7 +5,7 @@ from analytic import calculateR
 
 values = [[], [], [], []]
 
-with open("../out.txt", "r") as out_file:
+with open("../damped_out.txt", "r") as out_file:
     idx = 1
     for line in out_file:
         if line == '\n':

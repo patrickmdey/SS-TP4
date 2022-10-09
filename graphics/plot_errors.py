@@ -5,7 +5,7 @@ errors = [[], [], []]
 steps = []
 labels = ["Verlet", "Beeman", "Gear Predictor Corrector"]
 
-with open("../error.txt", "r") as error_file:
+with open("../damped_error.txt", "r") as error_file:
     line = error_file.readline()
     while line:
         steps.append(float(line))

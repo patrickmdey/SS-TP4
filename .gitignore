@@ -1,8 +1,10 @@
 out.txt
 .idea
 out
-error.txt
+damped_error.txt
+damped_out.txt
 analytic.cpython-39.pyc
 *.iml
 ovito.txt
 mission_out.txt
+*.png

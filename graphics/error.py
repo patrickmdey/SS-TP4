@@ -2,7 +2,7 @@ from analytic import calculateR
 
 values = [[], [], []]
 
-with open("../out.txt", "r") as out_file:
+with open("../damped_out.txt", "r") as out_file:
     idx = 0
     for line in out_file:
         if line == '\n':
@@ -18,7 +18,7 @@ out_file.close()
 
 analytic = [calculateR(t[0]) for t in values[0]]
 
-with open("../error.txt", "a") as error_file:
+with open("../damped_error.txt", "a") as error_file:
     for i in range(len(values)):
         # Mean Quadratic Error
         error = 0
