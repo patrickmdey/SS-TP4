@@ -45,7 +45,8 @@ public class MissionMain {
         double earthX = 0, earthY = 0, earthVx = 0, earthVy = 0;
         double venusX = 0, venusY = 0, venusVx = 0, venusVy = 0;
 
-        try (Scanner earthScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/earth-horizons.csv")); Scanner venusScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/venus-horizons.csv"))) {
+        try (Scanner earthScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/earth-horizons.csv"));
+             Scanner venusScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/venus-horizons.csv"))) {
             earthScanner.nextLine();
             venusScanner.nextLine();
             //Read line
@@ -85,7 +86,7 @@ public class MissionMain {
                 }
 
                 for (int day = 0; day < DATES_TO_TRY; day++) {
-                    //for (int day = 228; day < 229; day++) {
+                //    for (int day = 228; day < 229; day++) {
                     // TODO: capaz se podría guardar en un archivo las ultimas posiciones o algo
                     earth = new CelestialBody(1, "Earth", new Point(earthX, earthY),
                             earthVx, earthVy, 6_371.01, 5.97219 * Math.pow(10, 24),
@@ -206,32 +207,37 @@ public class MissionMain {
 
         initializeRs(rx, ry, celestialBodies);
 
-        try (FileWriter outFile = new FileWriter("mission_out.txt", hasToAppend)) {
-            outFile.write(date + "\n");
+        try (FileWriter outFile = new FileWriter("mission_out.txt", hasToAppend);
+             FileWriter distanceFile = new FileWriter("distance_out.txt", hasToAppend)) {
             hasToAppend = true;
+            outFile.write(date + "\n");
+            double minDist = Double.MAX_VALUE;
+            int minDay = Integer.MAX_VALUE;
+            boolean crashed = false;
+
             //while (venus.getPosition().distanceTo(spaceship.getPosition()) > venus.getRadius() + spaceship.getRadius() + 1200 && iter < 1000000) {
-            for (int day = 0; day < DATES_TO_TRY; day++) {
+            for (int day = 0; day < DATES_TO_TRY && !crashed; day++) {
                 double elapsed = 0;
-                double minDist = Double.MAX_VALUE;
                 while (Double.compare(elapsed, 24 * 60 * 60) < 0) {
                     elapsed += STEP;
                     double currDist = venus.getPosition().distanceTo(spaceship.getPosition());
                     if (currDist < minDist) {
                         minDist = currDist;
-                        minIter = iter;
+                        minDay = day;
                     }
 
-                    if (currDist < venus.getRadius() + spaceship.getRadius() + 1400) {
+                    if (currDist <= venus.getRadius() + spaceship.getRadius()) {
                         System.out.println("Spaceship arrived to venus");
+                        crashed = true;
                         break; // TODO ver si hacemos algo mas y si funca
                     }
 
-                    if (elapsed % (STEP * 100) == 0) { // TODO hardcodeado
-                        outFile.write("4\n\n");
-                        outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, %.16f, %.16f\n",
-                                sun.getId(), sun.getPosition().getX(), sun.getPosition().getY(),
-                                sun.getVx(), sun.getVy(), sun.getRadius()));
-                    }
+//                    if (elapsed % (STEP * 100) == 0) { // TODO hardcodeado
+//                        outFile.write("4\n\n");
+//                        outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, %.16f, %.16f\n",
+//                                sun.getId(), sun.getPosition().getX(), sun.getPosition().getY(),
+//                                sun.getVx(), sun.getVy(), sun.getRadius()));
+//                    }
 
                     // Predecir
                     for (int i = 1; i < celestialBodies.size(); i++) {
@@ -268,17 +274,24 @@ public class MissionMain {
                         CelestialBody body = celestialBodies.get(i);
                         body.getPosition().update(rx[i][0], ry[i][0]);
                         body.updateVelocity(rx[i][1], ry[i][1]);
-                        if (elapsed % (STEP * 100) == 0)
-                            outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, " + "%.16f, %.16f\n",
-                                    body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius()));
+//                        if (elapsed % (STEP * 100) == 0)
+//                            outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, " + "%.16f, %.16f\n",
+//                                    body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius()));
                     }
 
+                    if (elapsed % (STEP * 100) == 0) {
+                        outFile.write("4\n\n");
+                        for (CelestialBody body : celestialBodies) {
+                            outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, " + "%.16f, %.16f\n",
+                                    body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius()));
+
+                        }
+                    }
                     outFile.flush();
                     iter++;
                 }
-                //System.out.println("Min dist: " + minDist + " at iter: " + minIter);
             }
-//                    outFile.write("\n"); // TODO: Ver como separamos condiciones iniciales
+            distanceFile.write(String.format("%s %s %f\n", date, date.plusDays(minDay), minDist));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
