@@ -3,7 +3,6 @@ package main.java.ar.edu.itba.ss;
 import main.java.ar.edu.itba.ss.VenusMission.models.CelestialBody;
 import main.java.ar.edu.itba.ss.VenusMission.models.Point;
 import main.java.ar.edu.itba.ss.utils.IntegrationAlgorithms;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -13,21 +12,14 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class MissionMain {
-
-    //    public static final double[] ALPHAS = new double[]{3.0 / 16, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
     public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
-
-    public static final double DAY_STEP = 60 * 60 * 24;
 
     public static final int STEP = 300; // TODO: juli dice
 
     public static final double STATION_ORBIT_SPEED = 7.12;
 
     public static final double STATION_ORBIT_HEIGHT = 1500;
-
-    public static final int DAYS_TO_SIMULATE = 900;
 
     public static final int DATES_TO_TRY = 365;
 
@@ -150,42 +142,7 @@ public class MissionMain {
 
         while (Double.compare(elapsed, 24 * 60 * 60) < 0) {
             elapsed += STEP;
-            // Predecir
-            for (int i = 1; i < celestialBodies.size(); i++) {
-                CelestialBody body = celestialBodies.get(i);
-                IntegrationAlgorithms.gearPredR(rx[i], STEP);
-                IntegrationAlgorithms.gearPredR(ry[i], STEP);
-
-                body.getPosition().update(rx[i][0], ry[i][0]); //Son las predicciones
-                body.updateVelocity(rx[i][1], ry[i][1]);
-            }
-
-            double[] deltaR2x = new double[4];
-            double[] deltaR2y = new double[4];
-
-            // Evaluar
-            for (int i = 1; i < celestialBodies.size(); i++) {
-                CelestialBody body = celestialBodies.get(i);
-                double[] predF = body.totalGravitationalForces(celestialBodies.stream().filter(b -> b != body).collect(Collectors.toList()));
-
-                double currAx = predF[0] / body.getMass();
-                double currAy = predF[1] / body.getMass();
-
-                double deltaAx = currAx - rx[i][2];
-                double deltaAy = currAy - ry[i][2];
-                deltaR2x[i] = deltaAx * Math.pow(STEP, 2) / 2;
-                deltaR2y[i] = deltaAy * Math.pow(STEP, 2) / 2;
-            }
-
-            // Corregir
-            for (int i = 1; i < celestialBodies.size(); i++) {
-                IntegrationAlgorithms.gearCorrectR(ALPHAS, rx[i], deltaR2x[i], STEP);
-                IntegrationAlgorithms.gearCorrectR(ALPHAS, ry[i], deltaR2y[i], STEP);
-
-                CelestialBody body = celestialBodies.get(i);
-                body.getPosition().update(rx[i][0], ry[i][0]);
-                body.updateVelocity(rx[i][1], ry[i][1]);
-            }
+            twoDimensionalGear(celestialBodies, rx, ry);
         }
     }
 
@@ -232,52 +189,7 @@ public class MissionMain {
                         break; // TODO ver si hacemos algo mas y si funca
                     }
 
-//                    if (elapsed % (STEP * 100) == 0) { // TODO hardcodeado
-//                        outFile.write("4\n\n");
-//                        outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, %.16f, %.16f\n",
-//                                sun.getId(), sun.getPosition().getX(), sun.getPosition().getY(),
-//                                sun.getVx(), sun.getVy(), sun.getRadius()));
-//                    }
-
-                    // Predecir
-                    for (int i = 1; i < celestialBodies.size(); i++) {
-                        CelestialBody body = celestialBodies.get(i);
-                        IntegrationAlgorithms.gearPredR(rx[i], STEP);
-                        IntegrationAlgorithms.gearPredR(ry[i], STEP);
-
-                        body.getPosition().update(rx[i][0], ry[i][0]); //Son las predicciones
-                        body.updateVelocity(rx[i][1], ry[i][1]);
-                    }
-
-                    double[] deltaR2x = new double[4];
-                    double[] deltaR2y = new double[4];
-
-                    // Evaluar
-                    for (int i = 1; i < celestialBodies.size(); i++) {
-                        CelestialBody body = celestialBodies.get(i);
-                        double[] predF = body.totalGravitationalForces(celestialBodies.stream().filter(b -> b != body).collect(Collectors.toList()));
-
-                        double currAx = predF[0] / body.getMass();
-                        double currAy = predF[1] / body.getMass();
-
-                        double deltaAx = currAx - rx[i][2];
-                        double deltaAy = currAy - ry[i][2];
-                        deltaR2x[i] = deltaAx * Math.pow(STEP, 2) / 2;
-                        deltaR2y[i] = deltaAy * Math.pow(STEP, 2) / 2;
-                    }
-
-                    // Corregir
-                    for (int i = 1; i < celestialBodies.size(); i++) {
-                        IntegrationAlgorithms.gearCorrectR(ALPHAS, rx[i], deltaR2x[i], STEP);
-                        IntegrationAlgorithms.gearCorrectR(ALPHAS, ry[i], deltaR2y[i], STEP);
-
-                        CelestialBody body = celestialBodies.get(i);
-                        body.getPosition().update(rx[i][0], ry[i][0]);
-                        body.updateVelocity(rx[i][1], ry[i][1]);
-//                        if (elapsed % (STEP * 100) == 0)
-//                            outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, " + "%.16f, %.16f\n",
-//                                    body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius()));
-                    }
+                    twoDimensionalGear(celestialBodies, rx, ry);
 
                     if (elapsed % (STEP * 100) == 0) {
                         outFile.write("4\n\n");
@@ -320,6 +232,44 @@ public class MissionMain {
 
             rx[i][5] = 0;
             ry[i][5] = 0;
+        }
+    }
+
+    public static void twoDimensionalGear(List<CelestialBody> celestialBodies, double[][] rx, double[][] ry){
+        for (int i = 1; i < celestialBodies.size(); i++) {
+            CelestialBody body = celestialBodies.get(i);
+            IntegrationAlgorithms.gearPredR(rx[i], STEP);
+            IntegrationAlgorithms.gearPredR(ry[i], STEP);
+
+            body.getPosition().update(rx[i][0], ry[i][0]); //Son las predicciones
+            body.updateVelocity(rx[i][1], ry[i][1]);
+        }
+
+        double[] deltaR2x = new double[4];
+        double[] deltaR2y = new double[4];
+
+        // Evaluar
+        for (int i = 1; i < celestialBodies.size(); i++) {
+            CelestialBody body = celestialBodies.get(i);
+            double[] predF = body.totalGravitationalForces(celestialBodies.stream().filter(b -> b != body).collect(Collectors.toList()));
+
+            double currAx = predF[0] / body.getMass();
+            double currAy = predF[1] / body.getMass();
+
+            double deltaAx = currAx - rx[i][2];
+            double deltaAy = currAy - ry[i][2];
+            deltaR2x[i] = deltaAx * Math.pow(STEP, 2) / 2;
+            deltaR2y[i] = deltaAy * Math.pow(STEP, 2) / 2;
+        }
+
+        // Corregir
+        for (int i = 1; i < celestialBodies.size(); i++) {
+            IntegrationAlgorithms.gearCorrectR(ALPHAS, rx[i], deltaR2x[i], STEP);
+            IntegrationAlgorithms.gearCorrectR(ALPHAS, ry[i], deltaR2y[i], STEP);
+
+            CelestialBody body = celestialBodies.get(i);
+            body.getPosition().update(rx[i][0], ry[i][0]);
+            body.updateVelocity(rx[i][1], ry[i][1]);
         }
     }
 }
