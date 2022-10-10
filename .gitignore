@@ -8,5 +8,9 @@ analytic.cpython-39.pyc
 ovito.txt
 mission_out.txt
 distance_out.txt
+velocity_out.txt
+sweep_distance_out.txt
+sweep_mission_out.txt
+sweep_velocity_out.txt
 *.png
 *.DS_Store

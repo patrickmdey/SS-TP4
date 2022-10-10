@@ -3,6 +3,7 @@ package main.java.ar.edu.itba.ss;
 import main.java.ar.edu.itba.ss.VenusMission.models.CelestialBody;
 import main.java.ar.edu.itba.ss.VenusMission.models.Point;
 import main.java.ar.edu.itba.ss.utils.IntegrationAlgorithms;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public class VenusMissionMain {
     public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
 
-    public static final int STEP = 300; // TODO: juli dice
+    public static final int STEP = 300;
 
     public static final double STATION_ORBIT_SPEED = 7.12;
 
@@ -28,11 +29,10 @@ public class VenusMissionMain {
     public static void main(String[] args) {
 
         CelestialBody sun, earth, venus;
-        long minIter = Integer.MAX_VALUE;//695700
+        long minIter = Integer.MAX_VALUE;
         sun = new CelestialBody(0, "Sun", new Point(0, 0), 0, 0, 695_700, 1_988_500 * Math.pow(10, 24), 0);
 
         double takeOffSpeed = 8;
-        double earthOrbitSpeed = 7.12;
 
         double earthX = 0, earthY = 0, earthVx = 0, earthVy = 0;
         double venusX = 0, venusY = 0, venusVx = 0, venusVy = 0;
@@ -78,8 +78,6 @@ public class VenusMissionMain {
                 }
 
                 for (int day = 0; day < DATES_TO_TRY; day++) {
-                //    for (int day = 228; day < 229; day++) {
-                    // TODO: capaz se podría guardar en un archivo las ultimas posiciones o algo
                     earth = new CelestialBody(1, "Earth", new Point(earthX, earthY),
                             earthVx, earthVy, 6_371.01, 5.97219 * Math.pow(10, 24),
                             29.79);
@@ -153,8 +151,6 @@ public class VenusMissionMain {
                                          CelestialBody spaceship, int offset) {
         LocalDate date = LocalDate.of(2022, Month.SEPTEMBER, 23);
         date = date.plusDays(offset);
-        long minIter = Integer.MAX_VALUE;//695700
-        long iter = 0;
 
         double[][] rx = new double[4][6];
         double[][] ry = new double[4][6];
@@ -165,25 +161,27 @@ public class VenusMissionMain {
         initializeRs(rx, ry, celestialBodies);
 
         try (FileWriter outFile = new FileWriter("mission_out.txt", hasToAppend);
-             FileWriter distanceFile = new FileWriter("distance_out.txt", hasToAppend)) {
+             FileWriter distanceFile = new FileWriter("distance_out.txt", hasToAppend);
+             FileWriter velocityFile = new FileWriter("velocity_out.txt", hasToAppend)
+             ) {
             hasToAppend = true;
             outFile.write(date + "\n");
             double minDist = Double.MAX_VALUE;
             int minDay = Integer.MAX_VALUE;
             boolean crashed = false;
 
-            //while (venus.getPosition().distanceTo(spaceship.getPosition()) > venus.getRadius() + spaceship.getRadius() + 1200 && iter < 1000000) {
             for (int day = 0; day < DATES_TO_TRY && !crashed; day++) {
-                double elapsed = 0;
-                while (Double.compare(elapsed, 24 * 60 * 60) < 0) {
+                int elapsed = 0;
+                while (elapsed < 24 * 60 * 60) {
                     elapsed += STEP;
-                    double currDist = venus.getPosition().distanceTo(spaceship.getPosition());
+                    double currDist = Math.max(venus.getPosition().distanceTo(spaceship.getPosition())
+                            - venus.getRadius(), 0);
                     if (currDist < minDist) {
                         minDist = currDist;
                         minDay = day;
                     }
 
-                    if (currDist <= venus.getRadius() + spaceship.getRadius()) {
+                    if (currDist <= 0) {
                         System.out.println("Spaceship arrived to venus");
                         crashed = true;
                         break; // TODO ver si hacemos algo mas y si funca
@@ -198,12 +196,14 @@ public class VenusMissionMain {
                                     body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius()));
 
                         }
+                        velocityFile.write(date + "\n");
+                        velocityFile.write(String.format(Locale.ROOT,
+                                "%.16f, %.16f\n", spaceship.getVx(), spaceship.getVy()));
                     }
                     outFile.flush();
-                    iter++;
                 }
             }
-            distanceFile.write(String.format(Locale.ROOT,"%s %s %f\n", date, date.plusDays(minDay), minDist));
+            distanceFile.write(String.format(Locale.ROOT, "%s,%s,%f\n", date, date.plusDays(minDay), minDist));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -235,7 +235,7 @@ public class VenusMissionMain {
         }
     }
 
-    public static void twoDimensionalGear(List<CelestialBody> celestialBodies, double[][] rx, double[][] ry){
+    public static void twoDimensionalGear(List<CelestialBody> celestialBodies, double[][] rx, double[][] ry) {
         for (int i = 1; i < celestialBodies.size(); i++) {
             CelestialBody body = celestialBodies.get(i);
             IntegrationAlgorithms.gearPredR(rx[i], STEP);
