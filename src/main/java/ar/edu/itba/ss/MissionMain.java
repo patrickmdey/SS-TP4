@@ -203,7 +203,7 @@ public class MissionMain {
                     iter++;
                 }
             }
-            distanceFile.write(String.format("%s %s %f\n", date, date.plusDays(minDay), minDist));
+            distanceFile.write(String.format(Locale.ROOT,"%s %s %f\n", date, date.plusDays(minDay), minDist));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);

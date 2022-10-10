@@ -1,20 +1,20 @@
+from datetime import date
 from matplotlib import pyplot as plt
 import numpy as np
 
 values = []
 dates = []
-with open("dist_out.txt", "r") as f:
+with open("../distance_out.txt", "r") as f:
     for line in f:
         parts = line.split(" ")
-        values.append(float(parts[-1]))
-        dates = parts[0]
+        values.append(float(parts[-1][:-1]))
+        dates.append(parts[0])
 f.close()
-print("Min: ", min(values))
 
 plt.plot(values)
 plt.yscale("log")
-xticks = np.arange(0, len(dates), step=40)
-plt.xticks(xticks, [dates[i] for i in xticks])
+xticks = np.arange(0, len(dates), step=34)
+plt.xticks(xticks, [dates[i] for i in xticks], rotation=45)
 plt.xlabel("Dia de despegue")
 plt.ylabel("Distancia Mínima a Venus (km)")
 plt.show()
