@@ -1,32 +1,34 @@
 *******************************************************************************
- Revised: April 12, 2021             Mercury                            199 / 1
+ Revised: June 21, 2016                 Mars                            499 / 4
+ 
+ PHYSICAL DATA (updated 2019-Oct-29):
+  Vol. mean radius (km) = 3389.92+-0.04   Density (g/cm^3)      =  3.933(5+-4)
+  Mass x10^23 (kg)      =    6.4171       Flattening, f         =  1/169.779
+  Volume (x10^10 km^3)  =   16.318        Equatorial radius (km)=  3396.19
+  Sidereal rot. period  =   24.622962 hr  Sid. rot. rate, rad/s =  0.0000708822 
+  Mean solar day (sol)  =   88775.24415 s Polar gravity m/s^2   =  3.758
+  Core radius (km)      = ~1700           Equ. gravity  m/s^2   =  3.71
+  Geometric Albedo      =    0.150                                              
 
- PHYSICAL DATA (updated 2021-Apr-12):
-  Vol. Mean Radius (km) =  2440+-1        Density (g cm^-3)     = 5.427
-  Mass x10^23 (kg)      =     3.302       Volume (x10^10 km^3)  = 6.085  
-  Sidereal rot. period  =    58.6463 d    Sid. rot. rate (rad/s)= 0.00000124001
-  Mean solar day        =   175.9421 d    Core radius (km)      = ~1600 
-  Geometric Albedo      =     0.106       Surface emissivity    = 0.77+-0.06
-  GM (km^3/s^2)         = 22031.86855     Equatorial radius, Re = 2440 km
-  GM 1-sigma (km^3/s^2) =                 Mass ratio (Sun/plnt) = 6023682
-  Mom. of Inertia       =     0.33        Equ. gravity  m/s^2   = 3.701     
-  Atmos. pressure (bar) = < 5x10^-15      Max. angular diam.    = 11.0"   
-  Mean Temperature (K)  = 440             Visual mag. V(1,0)    = -0.42 
-  Obliquity to orbit[1] =  2.11' +/- 0.1' Hill's sphere rad. Rp = 94.4 
-  Sidereal orb. per.    =  0.2408467 y    Mean Orbit vel.  km/s = 47.362 
-  Sidereal orb. per.    = 87.969257  d    Escape vel. km/s      =  4.435
+  GM (km^3/s^2)         = 42828.375214    Mass ratio (Sun/Mars) = 3098703.59
+  GM 1-sigma (km^3/s^2) = +- 0.00028      Mass of atmosphere, kg= ~ 2.5 x 10^16
+  Mean temperature (K)  =  210            Atmos. pressure (bar) =    0.0056 
+  Obliquity to orbit    =   25.19 deg     Max. angular diam.    =  17.9"
+  Mean sidereal orb per =    1.88081578 y Visual mag. V(1,0)    =  -1.52
+  Mean sidereal orb per =  686.98 d       Orbital speed,  km/s  =  24.13
+  Hill's sphere rad. Rp =  319.8          Escape speed, km/s    =   5.027
                                  Perihelion  Aphelion    Mean
-  Solar Constant (W/m^2)         14462       6278        9126
-  Maximum Planetary IR (W/m^2)   12700       5500        8000
-  Minimum Planetary IR (W/m^2)   6           6           6
+  Solar Constant (W/m^2)         717         493         589
+  Maximum Planetary IR (W/m^2)   470         315         390
+  Minimum Planetary IR (W/m^2)    30          30          30
 *******************************************************************************
 
 
 *******************************************************************************
-Ephemeris / WWW_USER Sun Oct  9 07:20:05 2022 Pasadena, USA      / Horizons
+Ephemeris / WWW_USER Mon Oct 10 04:03:22 2022 Pasadena, USA      / Horizons
 *******************************************************************************
-Target body name: Mercury (199)                   {source: DE441}
-Center body name: Sun (10)                        {source: DE441}
+Target body name: Mars (499)                      {source: mar097}
+Center body name: Sun (10)                        {source: mar097}
 Center-site name: BODY CENTER
 *******************************************************************************
 Start time      : A.D. 2022-Sep-23 00:00:00.0000 TDB
@@ -44,8 +46,8 @@ Reference frame : Ecliptic of J2000.0
             JDTDB,            Calendar Date (TDB),                      X,                      Y,                      Z,                     VX,                     VY,                     VZ,
 **************************************************************************************************************************************************************************************************
 $$SOE
-2459845.500000000, A.D. 2022-Sep-23 00:00:00.0000,  5.313780513013928E+07, -1.306219046393702E+06, -4.980879137802546E+06, -8.212667890029538E+00,  5.087674749305533E+01,  4.910951392033663E+00,
-2459846.500000000, A.D. 2022-Sep-24 00:00:00.0000,  5.225333228325590E+07,  3.088966223919542E+06, -4.540576351644767E+06, -1.228234904508805E+01,  5.080654656551096E+01,  5.278512263156767E+00,
+2459845.500000000, A.D. 2022-Sep-23 00:00:00.0000,  1.786168147853078E+08,  1.200317878617891E+08, -1.865747310101926E+06, -1.258973849575608E+01,  2.218149878011521E+01,  7.737087999847461E-01,
+2459846.500000000, A.D. 2022-Sep-24 00:00:00.0000,  1.775202102110000E+08,  1.219422767258047E+08, -1.798807347405180E+06, -1.279433775604580E+01,  2.204246826465556E+01,  7.758137460282954E-01,
 $$EOE
 **************************************************************************************************************************************************************************************************
  

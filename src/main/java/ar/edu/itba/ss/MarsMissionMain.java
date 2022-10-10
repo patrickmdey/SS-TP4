@@ -12,7 +12,7 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MercuryMissionMain {
+public class MarsMissionMain {
     public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
 
     public static final int STEP = 300; // TODO: juli dice
@@ -21,68 +21,56 @@ public class MercuryMissionMain {
 
     public static final double STATION_ORBIT_HEIGHT = 1500;
 
-    public static final int DATES_TO_TRY = 365;
+    public static final int DATES_TO_TRY = 686;
 
     public static boolean hasToAppend = false;
 
     public static void main(String[] args) {
 
-        CelestialBody sun, earth, venus, mercury;
+        CelestialBody sun, earth, mars;
         long minIter = Integer.MAX_VALUE;//695700
         sun = new CelestialBody(0, "Sun", new Point(0, 0), 0, 0, 695_700, 1_988_500 * Math.pow(10, 24), 0);
 
         double takeOffSpeed = 8;
-        double earthOrbitSpeed = 7.12;
 
         double earthX = 0, earthY = 0, earthVx = 0, earthVy = 0;
-        double venusX = 0, venusY = 0, venusVx = 0, venusVy = 0;
-        double mercuryX = 0, mercuryY = 0, mercuryVx = 0, mercuryVy = 0;
+        double marsX = 0, marsY = 0, marsVx = 0, marsVy = 0;
 
         try (Scanner earthScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/earth-horizons.csv"));
-             Scanner venusScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/venus-horizons.csv"));
-             Scanner mercuryScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/mercury-horizons.csv"))) {
+             Scanner marsScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/mars-horizons.csv"))) {
             earthScanner.nextLine();
-            venusScanner.nextLine();
-            mercuryScanner.nextLine();
+            marsScanner.nextLine();
             //Read line
-            while (earthScanner.hasNextLine() && venusScanner.hasNextLine() && mercuryScanner.hasNextLine()) {
+            while (earthScanner.hasNextLine() && marsScanner.hasNextLine()) {
                 String earthLine = earthScanner.nextLine();
-                String venusLine = venusScanner.nextLine();
-                String mercuryLine = mercuryScanner.nextLine();
+                String marsLine = marsScanner.nextLine();
                 //Scan the line for tokens
                 try (Scanner earthRowScanner = new Scanner(earthLine);
-                     Scanner venusRowScanner = new Scanner(venusLine);
-                     Scanner mercuryRowScanner = new Scanner(mercuryLine);) {
+                     Scanner marsRowScanner = new Scanner(marsLine);) {
                     earthRowScanner.useDelimiter(",");
-                    venusRowScanner.useDelimiter(",");
-                    mercuryRowScanner.useDelimiter(",");
-                    for (int i = 0; earthRowScanner.hasNext() && venusRowScanner.hasNext() && mercuryRowScanner.hasNext(); i++) {
+                    marsRowScanner.useDelimiter(",");
+                    for (int i = 0; earthRowScanner.hasNext()  && marsRowScanner.hasNext(); i++) {
                         String earthPart = earthRowScanner.next();
-                        String venusPart = venusRowScanner.next();
-                        String mercuryPart = mercuryRowScanner.next();
+                        String marsPart = marsRowScanner.next();
                         switch (i) {
                             case 2: {
                                 earthX = Double.parseDouble(earthPart);
-                                venusX = Double.parseDouble(venusPart);
-                                mercuryX = Double.parseDouble(mercuryPart);
+                                marsX = Double.parseDouble(marsPart);
                                 break;
                             }
                             case 3: {
                                 earthY = Double.parseDouble(earthPart);
-                                venusY = Double.parseDouble(venusPart);
-                                mercuryY = Double.parseDouble(mercuryPart);
+                                marsY = Double.parseDouble(marsPart);
                                 break;
                             }
                             case 5: {
                                 earthVx = Double.parseDouble(earthPart);
-                                venusVx = Double.parseDouble(venusPart);
-                                mercuryVx = Double.parseDouble(mercuryPart);
+                                marsVx = Double.parseDouble(marsPart);
                                 break;
                             }
                             case 6: {
                                 earthVy = Double.parseDouble(earthPart);
-                                venusVy = Double.parseDouble(venusPart);
-                                mercuryVy = Double.parseDouble(mercuryPart);
+                                marsVy = Double.parseDouble(marsPart);
                                 break;
                             }
                         }
@@ -95,20 +83,17 @@ public class MercuryMissionMain {
                     earth = new CelestialBody(1, "Earth", new Point(earthX, earthY),
                             earthVx, earthVy, 6_371.01, 5.97219 * Math.pow(10, 24),
                             29.79);
-                    venus = new CelestialBody(2, "Venus", new Point(venusX, venusY),
-                            venusVx, venusVy, 6_051.84, 48.685 * Math.pow(10, 23),
-                            35.021);
 
-                    mercury = new CelestialBody(3, "Mercury", new Point(mercuryX, mercuryY),
-                            mercuryVx, mercuryVy, 2_440, 3.302 * Math.pow(10, 23),
-                            47.362);
+                    mars = new CelestialBody(2, "Mars", new Point(marsX, marsY),
+                            marsVx, marsVy, 3_389.92, 6.4171 * Math.pow(10, 23),
+                            24.13);
 
                     for (int offset = 0; offset < day; offset++)
-                        simulateDay(Arrays.asList(sun, earth, venus));
+                        simulateDay(Arrays.asList(sun, earth, mars));
 
                     CelestialBody spaceship = launchSpaceship(earth);
 
-                    simulateSpaceship(sun, earth, venus, mercury, spaceship, day);
+                    simulateSpaceship(sun, earth, mars, spaceship, day);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -128,7 +113,7 @@ public class MercuryMissionMain {
         double earthDistanceToSun = earth.getPosition().distanceTo(new Point(0, 0));
 
         // esta del lado izquierdo
-        double spaceshipDistanceToSun = earthDistanceToSun - spaceshipOrbitRadius;
+        double spaceshipDistanceToSun = earthDistanceToSun + spaceshipOrbitRadius;
 
         double theta = Math.atan2(earth.getPosition().getY(), earth.getPosition().getX());
 
@@ -138,12 +123,12 @@ public class MercuryMissionMain {
 
         // Pasamos de tangencial a cartesiano
         double vOrb = Math.sqrt(Math.pow(earth.getVx(), 2) + Math.pow(earth.getVy(), 2));
-        double vOrbTot = vOrb - 8 - STATION_ORBIT_SPEED; // TODO hardcodeado el 8, pero despues es variable
+        double vOrbTot = vOrb + 8 + STATION_ORBIT_SPEED; // TODO hardcodeado el 8, pero despues es variable
 
-        double vx = -Math.sin(theta) * vOrbTot;
+        double vx = Math.sin(theta) * vOrbTot;
         double vy = Math.cos(theta) * vOrbTot;
 
-        return new CelestialBody(4, "Spaceship", new Point(x, y), vx, vy, 0,
+        return new CelestialBody(3, "Spaceship", new Point(x, y), vx, vy, 0,
                 2 * Math.pow(10, 5), 0);
     }
 
@@ -152,8 +137,8 @@ public class MercuryMissionMain {
      */
     public static void simulateDay(List<CelestialBody> celestialBodies) {
         double elapsed = 0;
-        double[][] rx = new double[3][6];
-        double[][] ry = new double[3][6];
+        double[][] rx = new double[4][6];
+        double[][] ry = new double[4][6];
         initializeRs(rx, ry, celestialBodies);
 
         while (Double.compare(elapsed, 24 * 60 * 60) < 0) {
@@ -165,17 +150,17 @@ public class MercuryMissionMain {
     /**
      * Simulates the spaceship orbiting the sun
      */
-    public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody venus, CelestialBody mercury,
+    public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody mars,
                                          CelestialBody spaceship, int offset) {
         LocalDate date = LocalDate.of(2022, Month.SEPTEMBER, 23);
         date = date.plusDays(offset);
         long minIter = Integer.MAX_VALUE;//695700
         long iter = 0;
 
-        double[][] rx = new double[5][6];
-        double[][] ry = new double[5][6];
+        double[][] rx = new double[4][6];
+        double[][] ry = new double[4][6];
 
-        List<CelestialBody> celestialBodies = new ArrayList<>(Arrays.asList(sun, earth, venus, mercury,
+        List<CelestialBody> celestialBodies = new ArrayList<>(Arrays.asList(sun, earth, mars,
                 spaceship));
 
         initializeRs(rx, ry, celestialBodies);
@@ -193,14 +178,14 @@ public class MercuryMissionMain {
                 double elapsed = 0;
                 while (Double.compare(elapsed, 24 * 60 * 60) < 0) {
                     elapsed += STEP;
-                    double currDist = venus.getPosition().distanceTo(spaceship.getPosition());
+                    double currDist = mars.getPosition().distanceTo(spaceship.getPosition());
                     if (currDist < minDist) {
                         minDist = currDist;
                         minDay = day;
                     }
 
-                    if (currDist <= venus.getRadius() + spaceship.getRadius()) {
-                        System.out.println("Spaceship arrived to venus");
+                    if (currDist <= mars.getRadius() + spaceship.getRadius()) {
+                        System.out.println("Spaceship arrived to mars");
                         crashed = true;
                         break; // TODO ver si hacemos algo mas y si funca
                     }
@@ -219,7 +204,7 @@ public class MercuryMissionMain {
                     iter++;
                 }
             }
-            distanceFile.write(String.format("%s %s %f\n", date, date.plusDays(minDay), minDist));
+            distanceFile.write(String.format(Locale.ROOT, "%s %s %f\n", date, date.plusDays(minDay), minDist));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -261,8 +246,8 @@ public class MercuryMissionMain {
             body.updateVelocity(rx[i][1], ry[i][1]);
         }
 
-        double[] deltaR2x = new double[5];
-        double[] deltaR2y = new double[5];
+        double[] deltaR2x = new double[4];
+        double[] deltaR2y = new double[4];
 
         // Evaluar
         for (int i = 1; i < celestialBodies.size(); i++) {

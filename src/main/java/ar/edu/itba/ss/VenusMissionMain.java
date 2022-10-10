@@ -12,7 +12,7 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MissionMain {
+public class VenusMissionMain {
     public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
 
     public static final int STEP = 300; // TODO: juli dice
