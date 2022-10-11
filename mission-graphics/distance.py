@@ -9,7 +9,7 @@ date_idx = -1
 start_dates = []
 min_dist = []
 
-with open("../sweep_mission_out.txt", "r") as mission_file:
+with open("../v_mission_out.txt", "r") as mission_file:
     line = mission_file.readline()
     
     while line:
