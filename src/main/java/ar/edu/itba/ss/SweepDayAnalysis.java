@@ -179,7 +179,7 @@ public class SweepDayAnalysis {
              FileWriter distanceFile = new FileWriter("sweep_distance_out.txt", hasToAppend);
              FileWriter velocityFile = new FileWriter("sweep_velocity_out.txt", hasToAppend)) {
             hasToAppend = true;
-            outFile.write(date + "\n");
+            outFile.write(dateToPrint + "\n");
             double minDist = Double.MAX_VALUE;
             int minDay = Integer.MAX_VALUE;
             boolean crashed = false;
@@ -187,7 +187,7 @@ public class SweepDayAnalysis {
             for (int day = 0; day < 365 && !crashed; day++) { // todo hardcodeado
                 int elapsed = 0;
                 while (elapsed < 24 * 60 * 60) {
-                    elapsed += STEP;
+                    
                     double currDist = Math.max(venus.getPosition().distanceTo(spaceship.getPosition())
                             - venus.getRadius(), 0);
                     if (currDist < minDist) {
@@ -216,6 +216,7 @@ public class SweepDayAnalysis {
                         velocityFile.write(String.format(Locale.ROOT,
                                 "%.16f, %.16f\n", spaceship.getVx(), spaceship.getVy()));
                     }
+                    elapsed += STEP; //TODO: estaba ni bien arrancaba el for. Checkear
                     outFile.flush();
                 }
             }
