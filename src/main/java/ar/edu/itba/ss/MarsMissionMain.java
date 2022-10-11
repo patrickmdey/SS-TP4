@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 public class MarsMissionMain {
     public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
 
-    public static final int STEP = 300; // TODO: juli dice
+    public static final int STEP = 300;
 
     public static final double STATION_ORBIT_SPEED = 7.12;
 
     public static final double STATION_ORBIT_HEIGHT = 1500;
 
-    public static final int DATES_TO_TRY = 686;
+    public static final int DATES_TO_TRY = 2 * 686;
 
     public static boolean hasToAppend = false;
 

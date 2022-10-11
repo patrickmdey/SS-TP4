@@ -77,8 +77,8 @@ public class MarsSweepDayAnalysis {
                     }
                 }
 
-                LocalDate startDate = LocalDate.of(2022, Month.SEPTEMBER, 9);
-                LocalDate optimalDate = LocalDate.of(2022, Month.SEPTEMBER, 8);
+                LocalDate startDate = LocalDate.of(2022, Month.SEPTEMBER, 23);
+                LocalDate optimalDate = LocalDate.of(2024, Month.OCTOBER, 19);
 
                 long days = startDate.until(optimalDate, ChronoUnit.DAYS);
 
@@ -90,8 +90,8 @@ public class MarsSweepDayAnalysis {
                                 earthVx, earthVy, 6_371.01, 5.97219 * Math.pow(10, 24),
                                 29.79);
                         mars = new CelestialBody(2, "mars", new Point(marsX, marsY),
-                                marsVx, marsVy, 6_051.84, 48.685 * Math.pow(10, 23),
-                                35.021);
+                                marsVx, marsVy, 3_389.92, 6.4171 * Math.pow(10, 23),
+                                24.13);
 
                         simulateDay(Arrays.asList(sun, earth, mars), day + days, dayOffset);
 
@@ -158,7 +158,7 @@ public class MarsSweepDayAnalysis {
      */
     public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody mars,
                                          CelestialBody spaceship, int offset, int minutesOffset) {
-        LocalDate date = LocalDate.of(2023, Month.MAY, 8);
+        LocalDate date = LocalDate.of(2024, Month.OCTOBER, 19);
         date = date.plusDays(offset);
 
         int h = (minutesOffset / 3600);
@@ -196,7 +196,7 @@ public class MarsSweepDayAnalysis {
                         minElapsed = elapsed;
                     }
 
-                    if (currDist <= 0) {
+                    if (currDist <= 300) {
                         System.out.println("Spaceship landed on mars");
                         crashed = true;
                         System.out.println("Relative velocity was: " +
