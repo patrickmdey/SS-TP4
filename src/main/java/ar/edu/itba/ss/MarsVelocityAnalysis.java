@@ -14,7 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class VenusVelocityAnalysis {
+public class MarsVelocityAnalysis {
     public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
 
     public static final int STEP = 300;
@@ -34,49 +34,49 @@ public class VenusVelocityAnalysis {
         }
 
         double v0 = Double.parseDouble(args[0]);
-        CelestialBody sun, earth, venus;
+        CelestialBody sun, earth, mars;
 
         sun = new CelestialBody(0, "Sun", new Point(0, 0), 0, 0,
                 695_700, 1_988_500 * Math.pow(10, 24), 0);
 
         double earthX = 0, earthY = 0, earthVx = 0, earthVy = 0;
-        double venusX = 0, venusY = 0, venusVx = 0, venusVy = 0;
+        double marsX = 0, marsY = 0, marsVx = 0, marsVy = 0;
 
 
         try (Scanner earthScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/earth-horizons.csv"));
-             Scanner venusScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/venus-horizons.csv"))) {
+             Scanner marsScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/mars-horizons.csv"))) {
             earthScanner.nextLine();
-            venusScanner.nextLine();
+            marsScanner.nextLine();
             //Read line
-            while (earthScanner.hasNextLine() && venusScanner.hasNextLine()) {
+            while (earthScanner.hasNextLine() && marsScanner.hasNextLine()) {
                 String earthLine = earthScanner.nextLine();
-                String venusLine = venusScanner.nextLine();
+                String marsLine = marsScanner.nextLine();
                 //Scan the line for tokens
-                try (Scanner earthRowScanner = new Scanner(earthLine); Scanner venusRowScanner = new Scanner(venusLine)) {
+                try (Scanner earthRowScanner = new Scanner(earthLine); Scanner marsRowScanner = new Scanner(marsLine)) {
                     earthRowScanner.useDelimiter(",");
-                    venusRowScanner.useDelimiter(",");
-                    for (int i = 0; earthRowScanner.hasNext() && venusRowScanner.hasNext(); i++) {
+                    marsRowScanner.useDelimiter(",");
+                    for (int i = 0; earthRowScanner.hasNext() && marsRowScanner.hasNext(); i++) {
                         String earthPart = earthRowScanner.next();
-                        String venusPart = venusRowScanner.next();
+                        String marsPart = marsRowScanner.next();
                         switch (i) {
                             case 2: {
                                 earthX = Double.parseDouble(earthPart);
-                                venusX = Double.parseDouble(venusPart);
+                                marsX = Double.parseDouble(marsPart);
                                 break;
                             }
                             case 3: {
                                 earthY = Double.parseDouble(earthPart);
-                                venusY = Double.parseDouble(venusPart);
+                                marsY = Double.parseDouble(marsPart);
                                 break;
                             }
                             case 5: {
                                 earthVx = Double.parseDouble(earthPart);
-                                venusVx = Double.parseDouble(venusPart);
+                                marsVx = Double.parseDouble(marsPart);
                                 break;
                             }
                             case 6: {
                                 earthVy = Double.parseDouble(earthPart);
-                                venusVy = Double.parseDouble(venusPart);
+                                marsVy = Double.parseDouble(marsPart);
                                 break;
                             }
                         }
@@ -93,15 +93,15 @@ public class VenusVelocityAnalysis {
                 earth = new CelestialBody(1, "Earth", new Point(earthX, earthY),
                         earthVx, earthVy, 6_371.01, 5.97219 * Math.pow(10, 24),
                         29.79);
-                venus = new CelestialBody(2, "Venus", new Point(venusX, venusY),
-                        venusVx, venusVy, 6_051.84, 48.685 * Math.pow(10, 23),
-                        35.021);
+                mars = new CelestialBody(2, "Mars", new Point(marsX, marsY),
+                        marsVx, marsVy, 3_389.92, 6.4171 * Math.pow(10, 23),
+                        24.13);
 
-                simulateDay(Arrays.asList(sun, earth, venus), days, startOffset);
+                simulateDay(Arrays.asList(sun, earth, mars), days, startOffset);
 
                 CelestialBody spaceship = launchSpaceship(earth, v0);
 
-                simulateSpaceship(sun, earth, venus, spaceship);
+                simulateSpaceship(sun, earth, mars, spaceship);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -118,7 +118,7 @@ public class VenusVelocityAnalysis {
         double earthDistanceToSun = earth.getPosition().distanceTo(new Point(0, 0));
 
         // esta del lado izquierdo
-        double spaceshipDistanceToSun = earthDistanceToSun - spaceshipOrbitRadius;
+        double spaceshipDistanceToSun = earthDistanceToSun + spaceshipOrbitRadius;
 
         double theta = Math.atan2(earth.getPosition().getY(), earth.getPosition().getX());
 
@@ -128,7 +128,7 @@ public class VenusVelocityAnalysis {
 
         // Pasamos de tangencial a cartesiano
         double vOrb = Math.sqrt(Math.pow(earth.getVx(), 2) + Math.pow(earth.getVy(), 2));
-        double vOrbTot = vOrb - v0 - STATION_ORBIT_SPEED;
+        double vOrbTot = vOrb + 8 + STATION_ORBIT_SPEED; // TODO hardcodeado el 8, pero despues es variable
 
         double vx = -Math.sin(theta) * vOrbTot;
         double vy = Math.cos(theta) * vOrbTot;
@@ -156,12 +156,12 @@ public class VenusVelocityAnalysis {
     /**
      * Simulates the spaceship orbiting the sun
      */
-    public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody venus,
+    public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody mars,
                                          CelestialBody spaceship) {
         double[][] rx = new double[4][6];
         double[][] ry = new double[4][6];
 
-        List<CelestialBody> celestialBodies = new ArrayList<>(Arrays.asList(sun, earth, venus,
+        List<CelestialBody> celestialBodies = new ArrayList<>(Arrays.asList(sun, earth, mars,
                 spaceship));
 
         initializeRs(rx, ry, celestialBodies);
@@ -173,14 +173,14 @@ public class VenusVelocityAnalysis {
             for (int day = 0; day < 365 && !crashed; day++) { // todo hardcodeado
                 int elapsed = 0;
                 while (elapsed < 24 * 60 * 60) {
-                    double currDist = Math.max(venus.getPosition().distanceTo(spaceship.getPosition())
-                            - venus.getRadius(), 0);
+                    double currDist = Math.max(mars.getPosition().distanceTo(spaceship.getPosition())
+                            - mars.getRadius(), 0);
                     if (currDist < minDist) {
                         minDist = currDist;
                     }
 
                     if (currDist <= 0) {
-                        System.out.println("Spaceship landed on venus");
+                        System.out.println("Spaceship landed on mars");
                         crashed = true;
                         break;
                     }
