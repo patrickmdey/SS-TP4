@@ -84,7 +84,7 @@ public class MarsVelocityAnalysis {
                 }
 
                 LocalDate startDate = LocalDate.of(2022, Month.SEPTEMBER, 23);
-                LocalDate optimalDate = LocalDate.of(2023, Month.MAY, 8);
+                LocalDate optimalDate = LocalDate.of(2024, Month.OCTOBER, 19);
 
                 long days = startDate.until(optimalDate, ChronoUnit.DAYS);
                 int optimalHour = 21;
