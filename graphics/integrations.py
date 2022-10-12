@@ -29,10 +29,11 @@ for i in range(len(labels)):
     y = [n[1] for n in values[i]]
     plt.plot(x, y, label=labels[i], linestyle=styles[i], c=colors[i])
 
-plt.xlabel("t (s)")
-plt.ylabel("r (m)")
+plt.xlabel("t (s)", size=14)
+plt.ylabel("r (m)", size=14)
 plt.xticks(np.arange(0, 5.5, step=0.5))
 plt.yticks(np.arange(-1, 1.1, step=0.2))
+plt.tick_params(labelsize=14)
 plt.legend()
 
 plt.show()

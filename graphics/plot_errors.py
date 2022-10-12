@@ -19,10 +19,12 @@ with open("../damped_error.txt", "r") as error_file:
 error_file.close()
 
 for i in range(len(errors)):
-    plt.plot(steps, errors[i], label=labels[i])
+    plt.plot(steps, errors[i], label=labels[i], marker="o")
 
-plt.xlabel("t (s)")
-plt.ylabel("error")
+plt.xlabel("t (s)", size=14)
+plt.ylabel("error ($m^2$)", size=14)
+
+plt.tick_params(labelsize=14)
 
 plt.xscale("log")
 plt.yscale("log")
