@@ -1,5 +1,5 @@
-with open("../mission_out.txt", "r") as mission_file:
-    with open("../ovito.txt", "w") as ovito_file:
+with open("../outFiles/mission_out.txt", "r") as mission_file:
+    with open("../outFiles/ovito.txt", "w") as ovito_file:
         line = mission_file.readline()
         while line:
             if not line[:-1].isnumeric():

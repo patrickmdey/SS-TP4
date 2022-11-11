@@ -1,8 +1,9 @@
 package main.java.ar.edu.itba.ss;
 
-import main.java.ar.edu.itba.ss.VenusMission.models.CelestialBody;
-import main.java.ar.edu.itba.ss.VenusMission.models.Point;
+import main.java.ar.edu.itba.ss.models.CelestialBody;
+import main.java.ar.edu.itba.ss.models.Point;
 import main.java.ar.edu.itba.ss.utils.IntegrationAlgorithms;
+import main.java.ar.edu.itba.ss.utils.MissionUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -95,7 +96,7 @@ public class MarsSweepDayAnalysis {
 
                         simulateDay(Arrays.asList(sun, earth, mars), day + days, dayOffset);
 
-                        CelestialBody spaceship = launchSpaceship(earth);
+                        CelestialBody spaceship = MissionUtils.launchSpaceship(earth, 8, 1);
 
                         simulateSpaceship(sun, earth, mars, spaceship, day, dayOffset);
 
@@ -109,33 +110,6 @@ public class MarsSweepDayAnalysis {
         }
     }
 
-    /**
-     * Recreates the spaceship launch
-     */
-    private static CelestialBody launchSpaceship(CelestialBody earth) {
-        double spaceshipOrbitRadius = earth.getRadius() + STATION_ORBIT_HEIGHT;
-
-        double earthDistanceToSun = earth.getPosition().distanceTo(new Point(0, 0));
-
-        // esta del lado izquierdo
-        double spaceshipDistanceToSun = earthDistanceToSun + spaceshipOrbitRadius;
-
-        double theta = Math.atan2(earth.getPosition().getY(), earth.getPosition().getX());
-
-        // Pasamos de normal a cartesiano
-        double x = Math.cos(theta) * spaceshipDistanceToSun;
-        double y = Math.sin(theta) * spaceshipDistanceToSun;
-
-        // Pasamos de tangencial a cartesiano
-        double vOrb = Math.sqrt(Math.pow(earth.getVx(), 2) + Math.pow(earth.getVy(), 2));
-        double vOrbTot = vOrb + 8 + STATION_ORBIT_SPEED; // TODO hardcodeado el 8, pero despues es variable
-
-        double vx = -Math.sin(theta) * vOrbTot;
-        double vy = Math.cos(theta) * vOrbTot;
-
-        return new CelestialBody(3, "Spaceship", new Point(x, y), vx, vy, 0,
-                2 * Math.pow(10, 5), 0);
-    }
 
     /**
      * Simulates the planets orbiting the sun
@@ -145,10 +119,10 @@ public class MarsSweepDayAnalysis {
         double elapsed = 0;
         double[][] rx = new double[3][6];
         double[][] ry = new double[3][6];
-        initializeRs(rx, ry, celestialBodies);
+        MissionUtils.initializeRs(rx, ry, celestialBodies);
         while (Double.compare(elapsed, 24 * 60 * 60 * daysToSim + dayOffset) < 0) {
             elapsed += STEP;
-            twoDimensionalGear(celestialBodies, rx, ry);
+            MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
         }
 
     }
@@ -173,11 +147,11 @@ public class MarsSweepDayAnalysis {
         List<CelestialBody> celestialBodies = new ArrayList<>(Arrays.asList(sun, earth, mars,
                 spaceship));
 
-        initializeRs(rx, ry, celestialBodies);
+        MissionUtils.initializeRs(rx, ry, celestialBodies);
 
-        try (FileWriter outFile = new FileWriter("sweep_mission_out.txt", hasToAppend);
-             FileWriter distanceFile = new FileWriter("sweep_distance_out.txt", hasToAppend);
-             FileWriter velocityFile = new FileWriter("sweep_velocity_out.txt", hasToAppend)) {
+        try (FileWriter outFile = new FileWriter("./outFiles/sweep_mission_out.txt", hasToAppend);
+             FileWriter distanceFile = new FileWriter("./outFiles/sweep_distance_out.txt", hasToAppend);
+             FileWriter velocityFile = new FileWriter("./outFiles/sweep_velocity_out.txt", hasToAppend)) {
             hasToAppend = true;
             outFile.write(dateToPrint + "\n");
             double minDist = Double.MAX_VALUE;
@@ -205,7 +179,7 @@ public class MarsSweepDayAnalysis {
                         break;
                     }
 
-                    twoDimensionalGear(celestialBodies, rx, ry);
+                    MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
 
                     if (elapsed % (STEP * 100) == 0) {
                         outFile.write("4\n\n");
@@ -225,69 +199,6 @@ public class MarsSweepDayAnalysis {
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
-        }
-    }
-
-    public static void initializeRs(double[][] rx, double[][] ry, List<CelestialBody> celestialBodies) {
-        for (int i = 1; i < celestialBodies.size(); i++) {
-            CelestialBody body = celestialBodies.get(i);
-            rx[i][0] = body.getPosition().getX();
-            ry[i][0] = body.getPosition().getY();
-
-            rx[i][1] = body.getVx();
-            ry[i][1] = body.getVy();
-
-            double[] forces = body.totalGravitationalForces(celestialBodies.stream().filter(b -> b != body).collect(Collectors.toList()));
-
-            rx[i][2] = forces[0] / body.getMass();
-            ry[i][2] = forces[1] / body.getMass();
-
-            rx[i][3] = 0;
-            ry[i][3] = 0;
-
-            rx[i][4] = 0;
-            ry[i][4] = 0;
-
-            rx[i][5] = 0;
-            ry[i][5] = 0;
-        }
-    }
-
-    public static void twoDimensionalGear(List<CelestialBody> celestialBodies, double[][] rx, double[][] ry) {
-        for (int i = 1; i < celestialBodies.size(); i++) {
-            CelestialBody body = celestialBodies.get(i);
-            IntegrationAlgorithms.gearPredR(rx[i], STEP);
-            IntegrationAlgorithms.gearPredR(ry[i], STEP);
-
-            body.getPosition().update(rx[i][0], ry[i][0]); //Son las predicciones
-            body.updateVelocity(rx[i][1], ry[i][1]);
-        }
-
-        double[] deltaR2x = new double[4];
-        double[] deltaR2y = new double[4];
-
-        // Evaluar
-        for (int i = 1; i < celestialBodies.size(); i++) {
-            CelestialBody body = celestialBodies.get(i);
-            double[] predF = body.totalGravitationalForces(celestialBodies.stream().filter(b -> b != body).collect(Collectors.toList()));
-
-            double currAx = predF[0] / body.getMass();
-            double currAy = predF[1] / body.getMass();
-
-            double deltaAx = currAx - rx[i][2];
-            double deltaAy = currAy - ry[i][2];
-            deltaR2x[i] = deltaAx * Math.pow(STEP, 2) / 2;
-            deltaR2y[i] = deltaAy * Math.pow(STEP, 2) / 2;
-        }
-
-        // Corregir
-        for (int i = 1; i < celestialBodies.size(); i++) {
-            IntegrationAlgorithms.gearCorrectR(ALPHAS, rx[i], deltaR2x[i], STEP);
-            IntegrationAlgorithms.gearCorrectR(ALPHAS, ry[i], deltaR2y[i], STEP);
-
-            CelestialBody body = celestialBodies.get(i);
-            body.getPosition().update(rx[i][0], ry[i][0]);
-            body.updateVelocity(rx[i][1], ry[i][1]);
         }
     }
 }

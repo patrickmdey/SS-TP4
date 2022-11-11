@@ -12,7 +12,7 @@ public class MainOscillator {
         double gamma = 100 ;
         double step = args[0] != null ? Double.parseDouble(args[0]) : 0.01;
 
-        FileWriter writer = new FileWriter("damped_out.txt");
+        FileWriter writer = new FileWriter("./outFiles/damped_out.txt");
         DampedOscillator oscillator = new DampedOscillator(mass, k, gamma, step, writer);
 
         oscillator.verlet();
