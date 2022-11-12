@@ -2,7 +2,7 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-G = 6.693e-11
+G = 6.693e-20
 
 energies = []
 with open("../outFiles/mission_out.txt", "r") as mission_file:
@@ -36,5 +36,11 @@ with open("../outFiles/mission_out.txt", "r") as mission_file:
 
 mission_file.close()
 
-plt.plot(energies)
-plt.show()
+with open("../outFiles/energies.txt", "a") as energies_out:
+    for i in range(1,len(energies)):
+        energies_out.write("{}\n".format(100 * (energies[i] - energies[0]) / energies[0]))
+
+    energies_out.write("\n")
+energies_out.close()
+# plt.plot(energies)
+# plt.show()
