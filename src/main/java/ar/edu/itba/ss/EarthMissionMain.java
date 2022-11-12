@@ -27,15 +27,10 @@ public class EarthMissionMain {
         long minIter = Integer.MAX_VALUE;
         sun = new CelestialBody(0, "Sun", new Point(0, 0), 0, 0, 695_700, 1_988_500 * Math.pow(10, 24), 0);
 
-        double takeOffSpeed = 8;
-
         double earthX = 0, earthY = 0, earthVx = 0, earthVy = 0;
         double venusX = 0, venusY = 0, venusVx = 0, venusVy = 0;
 
         try (Scanner backScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/venus-earth.csv"))) {
-
-
-
             backScanner.nextLine();
             //Read line
             while (backScanner.hasNextLine()) {
@@ -87,7 +82,7 @@ public class EarthMissionMain {
      */
     public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody venus,
                                          CelestialBody spaceship, int offset) {
-        LocalDate date = LocalDate.of(2023, Month.JULY, 14);
+        LocalDate date = LocalDate.of(2023, Month.JULY, 15);
         date = date.plusDays(offset);
 
         double[][] rx = new double[4][6];
@@ -120,7 +115,7 @@ public class EarthMissionMain {
                     }
 
                     if (currDist <= 0) {
-                        System.out.println("Spaceship arrived to venus");
+                        System.out.println("Spaceship arrived to Earth");
                         crashed = true;
                         break; // TODO ver si hacemos algo mas y si funca
                     }
