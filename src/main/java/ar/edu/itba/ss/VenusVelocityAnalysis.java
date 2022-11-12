@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class VenusVelocityAnalysis {
-    public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
     public static boolean hasToAppend = false;
 
     public static void main(String[] args) {

@@ -2,7 +2,6 @@ package main.java.ar.edu.itba.ss;
 
 import main.java.ar.edu.itba.ss.models.CelestialBody;
 import main.java.ar.edu.itba.ss.models.Point;
-import main.java.ar.edu.itba.ss.utils.IntegrationAlgorithms;
 import main.java.ar.edu.itba.ss.utils.MissionUtils;
 
 import java.io.File;
@@ -14,64 +13,56 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class MarsSweepDayAnalysis {
-    public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
-
+public class VenusSweepDayAnalysis {
     public static final int STEP = 300;
-
-    public static final double STATION_ORBIT_SPEED = 7.12;
-
-    public static final double STATION_ORBIT_HEIGHT = 1500;
-
     public static final int DATES_TO_TRY = 3;
 
     public static boolean hasToAppend = false;
 
     public static void main(String[] args) {
-        CelestialBody sun, earth, mars;
+        CelestialBody sun, earth, venus;
         long minIter = Integer.MAX_VALUE;
         sun = new CelestialBody(0, "Sun", new Point(0, 0), 0, 0,
                 695_700, 1_988_500 * Math.pow(10, 24), 0);
 
         double earthX = 0, earthY = 0, earthVx = 0, earthVy = 0;
-        double marsX = 0, marsY = 0, marsVx = 0, marsVy = 0;
+        double venusX = 0, venusY = 0, venusVx = 0, venusVy = 0;
 
         try (Scanner earthScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/earth-horizons.csv"));
-             Scanner marsScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/mars-horizons.csv"))) {
+             Scanner venusScanner = new Scanner(new File("src/main/java/ar/edu/itba/ss/files/venus-horizons.csv"))) {
             earthScanner.nextLine();
-            marsScanner.nextLine();
+            venusScanner.nextLine();
             //Read line
-            while (earthScanner.hasNextLine() && marsScanner.hasNextLine()) {
+            while (earthScanner.hasNextLine() && venusScanner.hasNextLine()) {
                 String earthLine = earthScanner.nextLine();
-                String marsLine = marsScanner.nextLine();
+                String venusLine = venusScanner.nextLine();
                 //Scan the line for tokens
-                try (Scanner earthRowScanner = new Scanner(earthLine); Scanner marsRowScanner = new Scanner(marsLine)) {
+                try (Scanner earthRowScanner = new Scanner(earthLine); Scanner venusRowScanner = new Scanner(venusLine)) {
                     earthRowScanner.useDelimiter(",");
-                    marsRowScanner.useDelimiter(",");
-                    for (int i = 0; earthRowScanner.hasNext() && marsRowScanner.hasNext(); i++) {
+                    venusRowScanner.useDelimiter(",");
+                    for (int i = 0; earthRowScanner.hasNext() && venusRowScanner.hasNext(); i++) {
                         String earthPart = earthRowScanner.next();
-                        String marsPart = marsRowScanner.next();
+                        String venusPart = venusRowScanner.next();
                         switch (i) {
                             case 2: {
                                 earthX = Double.parseDouble(earthPart);
-                                marsX = Double.parseDouble(marsPart);
+                                venusX = Double.parseDouble(venusPart);
                                 break;
                             }
                             case 3: {
                                 earthY = Double.parseDouble(earthPart);
-                                marsY = Double.parseDouble(marsPart);
+                                venusY = Double.parseDouble(venusPart);
                                 break;
                             }
                             case 5: {
                                 earthVx = Double.parseDouble(earthPart);
-                                marsVx = Double.parseDouble(marsPart);
+                                venusVx = Double.parseDouble(venusPart);
                                 break;
                             }
                             case 6: {
                                 earthVy = Double.parseDouble(earthPart);
-                                marsVy = Double.parseDouble(marsPart);
+                                venusVy = Double.parseDouble(venusPart);
                                 break;
                             }
                         }
@@ -79,7 +70,7 @@ public class MarsSweepDayAnalysis {
                 }
 
                 LocalDate startDate = LocalDate.of(2022, Month.SEPTEMBER, 23);
-                LocalDate optimalDate = LocalDate.of(2024, Month.OCTOBER, 19);
+                LocalDate optimalDate = LocalDate.of(2023, Month.MAY, 8);
 
                 long days = startDate.until(optimalDate, ChronoUnit.DAYS);
 
@@ -90,15 +81,15 @@ public class MarsSweepDayAnalysis {
                         earth = new CelestialBody(1, "Earth", new Point(earthX, earthY),
                                 earthVx, earthVy, 6_371.01, 5.97219 * Math.pow(10, 24),
                                 29.79);
-                        mars = new CelestialBody(2, "mars", new Point(marsX, marsY),
-                                marsVx, marsVy, 3_389.92, 6.4171 * Math.pow(10, 23),
-                                24.13);
+                        venus = new CelestialBody(2, "Venus", new Point(venusX, venusY),
+                                venusVx, venusVy, 6_051.84, 48.685 * Math.pow(10, 23),
+                                35.021);
 
-                        simulateDay(Arrays.asList(sun, earth, mars), day + days, dayOffset);
+                        simulateDay(Arrays.asList(sun, earth, venus), day + days, dayOffset);
 
-                        CelestialBody spaceship = MissionUtils.launchSpaceship(earth, 8, 1);
+                        CelestialBody spaceship = MissionUtils.launchSpaceship(earth, 8, -1);
 
-                        simulateSpaceship(sun, earth, mars, spaceship, day, dayOffset);
+                        simulateSpaceship(sun, earth, venus, spaceship, day, dayOffset);
 
                         dayOffset += 10 * 60;
                     }
@@ -109,7 +100,6 @@ public class MarsSweepDayAnalysis {
             System.exit(1);
         }
     }
-
 
     /**
      * Simulates the planets orbiting the sun
@@ -130,9 +120,9 @@ public class MarsSweepDayAnalysis {
     /**
      * Simulates the spaceship orbiting the sun
      */
-    public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody mars,
+    public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody venus,
                                          CelestialBody spaceship, int offset, int minutesOffset) {
-        LocalDate date = LocalDate.of(2024, Month.OCTOBER, 19);
+        LocalDate date = LocalDate.of(2023, Month.MAY, 8);
         date = date.plusDays(offset);
 
         int h = (minutesOffset / 3600);
@@ -144,7 +134,7 @@ public class MarsSweepDayAnalysis {
         double[][] rx = new double[4][6];
         double[][] ry = new double[4][6];
 
-        List<CelestialBody> celestialBodies = new ArrayList<>(Arrays.asList(sun, earth, mars,
+        List<CelestialBody> celestialBodies = new ArrayList<>(Arrays.asList(sun, earth, venus,
                 spaceship));
 
         MissionUtils.initializeRs(rx, ry, celestialBodies);
@@ -161,35 +151,35 @@ public class MarsSweepDayAnalysis {
             for (int day = 0; day < 365 && !crashed; day++) { // todo hardcodeado
                 int elapsed = 0;
                 while (elapsed < 24 * 60 * 60) {
-
-                    double currDist = Math.max(mars.getPosition().distanceTo(spaceship.getPosition())
-                            - mars.getRadius(), 0);
+                    
+                    double currDist = Math.max(venus.getPosition().distanceTo(spaceship.getPosition())
+                            - venus.getRadius(), 0);
                     if (currDist < minDist) {
                         minDist = currDist;
                         minDay = day;
                         minElapsed = elapsed;
                     }
 
-                    if (currDist <= 300) {
-                        System.out.println("Spaceship landed on mars");
+                    if (currDist <= 0) {
+                        System.out.println("Spaceship landed on venus");
                         crashed = true;
                         System.out.println("Relative velocity was: " +
-                                Math.sqrt(Math.pow(spaceship.getVx() - mars.getVx(), 2) +
-                                        Math.pow(spaceship.getVy() - mars.getVy(), 2)));
+                                Math.sqrt(Math.pow(spaceship.getVx() - venus.getVx(), 2) +
+                                        Math.pow(spaceship.getVy() - venus.getVy(), 2)));
                         break;
                     }
 
                     MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
 
-                    if (elapsed % (STEP * 100) == 0) {
+                    //if (elapsed % (STEP * 100) == 0) {
                         outFile.write("4\n\n");
                         for (CelestialBody body : celestialBodies) {
-                            outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, " + "%.16f, %.16f\n",
-                                    body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius()));
+                            outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, %.16f, %.16f, %.16f\n",
+                                    body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius(), body.getMass()));
                         }
                         velocityFile.write(String.format(Locale.ROOT,
                                 "%.16f, %.16f\n", spaceship.getVx(), spaceship.getVy()));
-                    }
+                    //}
                     elapsed += STEP; //TODO: estaba ni bien arrancaba el for. Checkear
                     outFile.flush();
                 }
@@ -201,4 +191,5 @@ public class MarsSweepDayAnalysis {
             System.exit(1);
         }
     }
+
 }
