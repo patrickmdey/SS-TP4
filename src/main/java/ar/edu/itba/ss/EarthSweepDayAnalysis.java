@@ -54,9 +54,7 @@ public class EarthSweepDayAnalysis {
 
 
             LocalDate startDate = LocalDate.of(2022, Month.JULY, 15);
-            LocalDate optimalDate = LocalDate.of(2023, Month.JANUARY, 15);
-
-            long days = startDate.until(optimalDate, ChronoUnit.DAYS);
+            LocalDate optimalDate = LocalDate.of(2023, Month.JULY, 14);
 
             for (int day = 0; day < DATES_TO_TRY; day++) { // check 3 days
                 int dayOffset = 0;
@@ -69,7 +67,7 @@ public class EarthSweepDayAnalysis {
                             venusVx, venusVy, 6_051.84, 48.685 * Math.pow(10, 23),
                             35.021);
 
-                    simulateDay(Arrays.asList(sun, earth, venus), day + days, dayOffset);
+                    simulateDay(Arrays.asList(sun, earth, venus), day, dayOffset);
 
                     CelestialBody spaceship = MissionUtils.launchSpaceship(earth, 8, -1);
 
@@ -103,7 +101,7 @@ public class EarthSweepDayAnalysis {
      */
     public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody venus,
                                          CelestialBody spaceship, int offset, int minutesOffset) {
-        LocalDate date = LocalDate.of(2023, Month.MAY, 8);
+        LocalDate date = LocalDate.of(2023, Month.JULY, 14);
         date = date.plusDays(offset);
 
         int h = (minutesOffset / 3600);
@@ -134,7 +132,7 @@ public class EarthSweepDayAnalysis {
                 while (elapsed < 24 * 60 * 60) {
 
                     double currDist = Math.max(earth.getPosition().distanceTo(spaceship.getPosition())
-                            - venus.getRadius(), 0);
+                            - earth.getRadius(), 0);
                     if (currDist < minDist) {
                         minDist = currDist;
                         minDay = day;
@@ -152,7 +150,7 @@ public class EarthSweepDayAnalysis {
 
                     MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
 
-                    //if (elapsed % (STEP * 100) == 0) {
+                    if (elapsed % (STEP * 100) == 0) {
                     outFile.write("4\n\n");
                     for (CelestialBody body : celestialBodies) {
                         outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, %.16f, %.16f, %.16f\n",
@@ -160,7 +158,7 @@ public class EarthSweepDayAnalysis {
                     }
                     velocityFile.write(String.format(Locale.ROOT,
                             "%.16f, %.16f\n", spaceship.getVx(), spaceship.getVy()));
-                    //}
+                    }
                     elapsed += STEP; //TODO: estaba ni bien arrancaba el for. Checkear
                     outFile.flush();
                 }

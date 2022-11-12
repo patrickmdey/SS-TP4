@@ -21,7 +21,7 @@ elif sys.argv[1].upper() == "VENUS":
 
 values = []
 dates = []
-with open("../outFiles/" + mission_char +"_distance_out.txt", "r") as f:
+with open("../outFiles/" + mission_char +"_sweep_distance_out.txt", "r") as f:
     for line in f:
         parts = line.split(",")
         values.append(float(parts[-1][:-1]))
