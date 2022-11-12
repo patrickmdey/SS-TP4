@@ -6,7 +6,7 @@ def distance(x1, y1, r1, x2, y2, r2):
 
 dt = 300
 time = dt # La posicion inicial nunca se escribe
-with open("../outFiles/v_mission_out.txt", "r") as file:
+with open("../outFiles/e_mission_out.txt", "r") as file:
     line = file.readline()
     while line:
         count = int(line)
