@@ -5,7 +5,7 @@ import numpy as np
 
 values = []
 dates = []
-with open("../sweep_distance_out.txt", "r") as f:
+with open("../outFiles/sweep_distance_out.txt", "r") as f:
     for line in f:
         parts = line.split(",")
         values.append(float(parts[-1][:-1]))

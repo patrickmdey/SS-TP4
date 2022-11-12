@@ -2,7 +2,6 @@ package main.java.ar.edu.itba.ss;
 
 import main.java.ar.edu.itba.ss.models.CelestialBody;
 import main.java.ar.edu.itba.ss.models.Point;
-import main.java.ar.edu.itba.ss.utils.IntegrationAlgorithms;
 import main.java.ar.edu.itba.ss.utils.MissionUtils;
 
 import java.io.File;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SweepDayAnalysis {
     public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
@@ -180,7 +178,7 @@ public class SweepDayAnalysis {
 
                     MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
 
-                    if (elapsed % (STEP * 100) == 0) {
+                    //if (elapsed % (STEP * 100) == 0) {
                         outFile.write("4\n\n");
                         for (CelestialBody body : celestialBodies) {
                             outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, " + "%.16f, %.16f\n",
@@ -188,7 +186,7 @@ public class SweepDayAnalysis {
                         }
                         velocityFile.write(String.format(Locale.ROOT,
                                 "%.16f, %.16f\n", spaceship.getVx(), spaceship.getVy()));
-                    }
+                    //}
                     elapsed += STEP; //TODO: estaba ni bien arrancaba el for. Checkear
                     outFile.flush();
                 }
