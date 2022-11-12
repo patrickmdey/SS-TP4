@@ -80,7 +80,7 @@ public class VenusVelocityAnalysis {
 
                 long days = startDate.until(optimalDate, ChronoUnit.DAYS);
                 int optimalHour = 21;
-                int optimalMinute = 30;
+                int optimalMinute = 40;
                 int startOffset = optimalHour * 60 * 60 + optimalMinute * 60;
                 earth = new CelestialBody(1, "Earth", new Point(earthX, earthY),
                         earthVx, earthVy, 6_371.01, 5.97219 * Math.pow(10, 24),
