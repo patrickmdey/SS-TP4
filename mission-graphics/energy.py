@@ -2,16 +2,14 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-G = 6.693e-20
+G = 6.693 * pow(10, -20)
 
 energies = []
-with open("../outFiles/mission_out.txt", "r") as mission_file:
+with open("../outFiles/energy_mission_out.txt", "r") as mission_file:
     line = mission_file.readline()
     while line:
-        if not line[:-1].isnumeric():
-            line = mission_file.readline()
-
         count = int(line)
+
         mission_file.readline()
         particles = []
 
@@ -28,19 +26,17 @@ with open("../outFiles/mission_out.txt", "r") as mission_file:
                 (x2, y2, m2) = particles[j]
 
                 dist = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-                energy += 2 * (-G) * m1 * m2 / dist # TODO: Checkear -G
+                energy += 2 * (-G) * m1 * m2 / dist
 
         energies.append(energy)
         line = mission_file.readline()
-
 
 mission_file.close()
 
 with open("../outFiles/energies.txt", "a") as energies_out:
     for i in range(1,len(energies)):
-        energies_out.write("{}\n".format(100 * (energies[i] - energies[0]) / energies[0]))
+        energies_out.write("{}\n".format(100 * abs((energies[i] - energies[0]) / energies[0])))
 
     energies_out.write("\n")
+
 energies_out.close()
-# plt.plot(energies)
-# plt.show()

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-steps=(900 600 300 150 75)
+steps=(3600 1800 900 300 180)
 rm outFiles/energies.txt
 
 for step in "${steps[@]}"
