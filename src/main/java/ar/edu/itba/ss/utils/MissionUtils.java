@@ -20,23 +20,23 @@ public class MissionUtils {
     /**
      * Recreates the spaceship launch
      */
-    public static CelestialBody launchSpaceship(CelestialBody earth, double v0, int position) {
-        double spaceshipOrbitRadius = earth.getRadius() + STATION_ORBIT_HEIGHT;
+    public static CelestialBody launchSpaceship(CelestialBody body, double v0, int position) {
+        double spaceshipOrbitRadius = body.getRadius() + STATION_ORBIT_HEIGHT;
 
-        double earthDistanceToSun = earth.getPosition().distanceTo(new Point(0, 0));
+        double earthDistanceToSun = body.getPosition().distanceTo(new Point(0, 0));
 
         // esta del lado izquierdo
         double spaceshipDistanceToSun = earthDistanceToSun + position * spaceshipOrbitRadius;
 
-        double nx = earth.getPosition().getX() / earthDistanceToSun;
-        double ny = earth.getPosition().getY() / earthDistanceToSun;
+        double nx = body.getPosition().getX() / earthDistanceToSun;
+        double ny = body.getPosition().getY() / earthDistanceToSun;
 
         // Pasamos de normal a cartesiano
         double x = nx * spaceshipDistanceToSun;
         double y = ny * spaceshipDistanceToSun;
 
         // Pasamos de cartesiano a tangencial
-        double vOrb = -ny * earth.getVx() + nx * earth.getVy();
+        double vOrb = -ny * body.getVx() + nx * body.getVy();
 
         double launchV = (v0 + STATION_ORBIT_SPEED) * position;
         double vOrbTot = vOrb + launchV;

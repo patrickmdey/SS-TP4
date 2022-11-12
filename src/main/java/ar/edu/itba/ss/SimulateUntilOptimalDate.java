@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class SimulateUntilOptimalDate {
@@ -72,7 +73,14 @@ public class SimulateUntilOptimalDate {
                         venusVx, venusVy, 6_051.84, 48.685 * Math.pow(10, 23),
                         35.021);
 
-                for (int offset = 0; offset < OPTIMAL_DAY+1; offset++)
+                LocalDate startDate = LocalDate.of(2022, Month.SEPTEMBER, 23);
+                LocalDate optimalDate = LocalDate.of(2023, Month.JULY, 15);
+
+                long days = startDate.until(optimalDate, ChronoUnit.DAYS);
+
+                System.out.println("Days: " + days);
+
+                for (int offset = 0; offset < days; offset++)
                     MissionUtils.simulateDay(Arrays.asList(sun, earth, venus));
 
                 try (FileWriter writer = new FileWriter("src/main/java/ar/edu/itba/ss/files/venus-earth.csv")) {

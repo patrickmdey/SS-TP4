@@ -53,8 +53,10 @@ public class EarthSweepDayAnalysis {
             }
 
 
-            LocalDate startDate = LocalDate.of(2022, Month.JULY, 15);
-            LocalDate optimalDate = LocalDate.of(2023, Month.JULY, 14);
+            LocalDate startDate = LocalDate.of(2023, Month.JULY, 15);
+            LocalDate optimalDate = LocalDate.of(2025, Month.JANUARY, 9);
+
+            long days = startDate.until(optimalDate, ChronoUnit.DAYS);
 
             for (int day = 0; day < DATES_TO_TRY; day++) { // check 3 days
                 int dayOffset = 0;
@@ -67,9 +69,9 @@ public class EarthSweepDayAnalysis {
                             venusVx, venusVy, 6_051.84, 48.685 * Math.pow(10, 23),
                             35.021);
 
-                    simulateDay(Arrays.asList(sun, earth, venus), day, dayOffset);
+                    simulateDay(Arrays.asList(sun, earth, venus), day + days, dayOffset);
 
-                    CelestialBody spaceship = MissionUtils.launchSpaceship(earth, 8, -1);
+                    CelestialBody spaceship = MissionUtils.launchSpaceship(venus, 8, 1);
 
                     simulateSpaceship(sun, earth, venus, spaceship, day, dayOffset);
 
@@ -101,7 +103,7 @@ public class EarthSweepDayAnalysis {
      */
     public static void simulateSpaceship(CelestialBody sun, CelestialBody earth, CelestialBody venus,
                                          CelestialBody spaceship, int offset, int minutesOffset) {
-        LocalDate date = LocalDate.of(2023, Month.JULY, 14);
+        LocalDate date = LocalDate.of(2025, Month.JANUARY, 9);
         date = date.plusDays(offset);
 
         int h = (minutesOffset / 3600);
@@ -140,7 +142,7 @@ public class EarthSweepDayAnalysis {
                     }
 
                     if (currDist <= 0) {
-                        System.out.println("Spaceship landed on venus");
+                        System.out.println("Spaceship landed on earth");
                         crashed = true;
                         System.out.println("Relative velocity was: " +
                                 Math.sqrt(Math.pow(spaceship.getVx() - earth.getVx(), 2) +
