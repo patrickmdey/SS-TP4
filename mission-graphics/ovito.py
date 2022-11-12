@@ -8,7 +8,7 @@ with open("../outFiles/mission_out.txt", "r") as mission_file:
             mission_file.readline()
             ovito_file.write("{}\n\n".format(count))
             for i in range(count):
-                [id, x, y, vx, vy, r] = mission_file.readline().split(",")
+                [id, x, y, vx, vy, r, _] = mission_file.readline().split(",")
 
                 if i == 0:
                     scalated_r = float(r)

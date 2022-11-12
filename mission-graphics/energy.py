@@ -20,7 +20,7 @@ with open("../outFiles/mission_out.txt", "r") as mission_file:
             [id, x, y, vx, vy, r, m] = mission_file.readline().split(",")
 
             energy += 0.5 * float(m) * (float(vx) ** 2 + float(vy) ** 2)
-            particles.add((float(x), float(y), float(m)))
+            particles.append((float(x), float(y), float(m)))
 
         for i in range(count):
             (x1, y1, m1) = particles[i]
@@ -36,5 +36,5 @@ with open("../outFiles/mission_out.txt", "r") as mission_file:
 
 mission_file.close()
 
-plt.plot(energies, marker="o")
+plt.plot(energies)
 plt.show()

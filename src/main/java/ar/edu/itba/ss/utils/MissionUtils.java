@@ -26,23 +26,22 @@ public class MissionUtils {
         double earthDistanceToSun = earth.getPosition().distanceTo(new Point(0, 0));
 
         // esta del lado izquierdo
-        double spaceshipDistanceToSun = earthDistanceToSun - spaceshipOrbitRadius;
-
-        double theta = Math.atan2(earth.getPosition().getY(), earth.getPosition().getX());
-
-        // Pasamos de normal a cartesiano
-        double x = Math.cos(theta) * spaceshipDistanceToSun;
-        double y = Math.sin(theta) * spaceshipDistanceToSun;
+        double spaceshipDistanceToSun = earthDistanceToSun + position * spaceshipOrbitRadius;
 
         double nx = earth.getPosition().getX() / earthDistanceToSun;
-        double ny = earth.getPosition().getX() / earthDistanceToSun;
+        double ny = earth.getPosition().getY() / earthDistanceToSun;
 
-        // Pasamos de tangencial a cartesiano
+        // Pasamos de normal a cartesiano
+        double x = nx * spaceshipDistanceToSun;
+        double y = ny * spaceshipDistanceToSun;
+
+        // Pasamos de cartesiano a tangencial
         double vOrb = -ny * earth.getVx() + nx * earth.getVy();
 
         double launchV = (v0 + STATION_ORBIT_SPEED) * position;
         double vOrbTot = vOrb + launchV;
 
+        // Pasamos de tangencial a cartesiano
         double vx = -ny * vOrbTot;
         double vy = nx * vOrbTot;
 

@@ -17,15 +17,6 @@ import java.util.stream.Collectors;
 
 public class VenusVelocityAnalysis {
     public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
-
-    public static final int STEP = 300;
-
-    public static final double STATION_ORBIT_SPEED = 7.12;
-
-    public static final double STATION_ORBIT_HEIGHT = 1500;
-
-    public static final int DATES_TO_TRY = 3;
-
     public static boolean hasToAppend = false;
 
     public static void main(String[] args) {
@@ -120,7 +111,7 @@ public class VenusVelocityAnalysis {
         double[][] ry = new double[3][6];
         MissionUtils.initializeRs(rx, ry, celestialBodies);
         while (Double.compare(elapsed, 24 * 60 * 60 * daysToSim + dayOffset) < 0) {
-            elapsed += STEP;
+            elapsed += MissionUtils.STEP;
             MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
         }
 
@@ -164,7 +155,7 @@ public class VenusVelocityAnalysis {
                         outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, " + "%.16f, %.16f\n",
                                 body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius()));
                     }
-                    elapsed += STEP; //TODO: estaba ni bien arrancaba el for. Checkear
+                    elapsed += MissionUtils.STEP; //TODO: estaba ni bien arrancaba el for. Checkear
                     outFile.flush();
                 }
             }
