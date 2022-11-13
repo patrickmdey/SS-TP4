@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 min_date = '2025-01-10T02:50'
-dt = 300*2
+dt = 300
 
 steps_per_day = math.ceil(24 * 60 * 60 / dt)
 print("Steps per day:", steps_per_day)
