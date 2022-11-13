@@ -120,21 +120,27 @@ public class EarthSweepDayAnalysis {
 
         MissionUtils.initializeRs(rx, ry, celestialBodies);
 
-        try (FileWriter outFile = new FileWriter("./outFiles/e_sweep_mission_out.txt", hasToAppend);
-             FileWriter distanceFile = new FileWriter("./outFiles/e_sweep_distance_out.txt", hasToAppend);
+        try (//FileWriter outFile = new FileWriter("./outFiles/e_sweep_mission_out.txt", hasToAppend);
+             //FileWriter distanceFile = new FileWriter("./outFiles/e_sweep_distance_out.txt", hasToAppend);
              FileWriter velocityFile = new FileWriter("./outFiles/e_sweep_velocity_out.txt", hasToAppend)) {
             hasToAppend = true;
-            outFile.write(dateToPrint + "\n");
+            //outFile.write(dateToPrint + "\n");
             double minDist = Double.MAX_VALUE;
             int minDay = Integer.MAX_VALUE;
             boolean crashed = false;
             int minElapsed = Integer.MAX_VALUE;
-            for (int day = 0; day < 365 && !crashed; day++) { // todo hardcodeado
+
+            List<Double[]> velocities = new ArrayList<>();
+
+            for (int day = 0; day < 365 && !crashed; day++) {
                 int elapsed = 0;
                 while (elapsed < 24 * 60 * 60) {
 
+                    velocities.add(new Double[]{spaceship.getVx(), spaceship.getVy()});
+
                     double currDist = Math.max(earth.getPosition().distanceTo(spaceship.getPosition())
                             - earth.getRadius(), 0);
+
                     if (currDist < minDist) {
                         minDist = currDist;
                         minDay = day;
@@ -147,26 +153,39 @@ public class EarthSweepDayAnalysis {
                         System.out.println("Relative velocity was: " +
                                 Math.sqrt(Math.pow(spaceship.getVx() - earth.getVx(), 2) +
                                         Math.pow(spaceship.getVy() - earth.getVy(), 2)));
+
+                        for (Double[] velocity : velocities) {
+                            velocityFile.write(String.format(Locale.ROOT,
+                                    "%.16f, %.16f\n", velocity[0], velocity[1]));
+                        }
+                        velocityFile.flush();
+
+                        System.out.println("Min distance was: " + minDist + " at " +
+                                dateToPrint.plusDays(minDay).plus(minElapsed, ChronoUnit.SECONDS));
                         break;
                     }
 
                     MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
 
+                    /*
                     if (elapsed % (STEP * 100) == 0) {
-                    outFile.write("4\n\n");
-                    for (CelestialBody body : celestialBodies) {
-                        outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, %.16f, %.16f, %.16f\n",
-                                body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius(), body.getMass()));
+                        outFile.write("4\n\n");
+                        for (CelestialBody body : celestialBodies) {
+                            outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, %.16f, %.16f, %.16f\n",
+                                    body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius(), body.getMass()));
+                        }
+                        velocityFile.write(String.format(Locale.ROOT,
+                                "%.16f, %.16f\n", spaceship.getVx(), spaceship.getVy()));
                     }
-                    velocityFile.write(String.format(Locale.ROOT,
-                            "%.16f, %.16f\n", spaceship.getVx(), spaceship.getVy()));
-                    }
-                    elapsed += STEP; //TODO: estaba ni bien arrancaba el for. Checkear
-                    outFile.flush();
+
+                     */
+                    elapsed += STEP;
+                    //outFile.flush();
                 }
             }
-            distanceFile.write(String.format(Locale.ROOT, "%s,%s,%f\n", dateToPrint,
-                    dateToPrint.plusDays(minDay).plus(minElapsed, ChronoUnit.SECONDS), minDist));
+            //distanceFile.write(String.format(Locale.ROOT, "%s,%s,%f\n", dateToPrint,
+            //        dateToPrint.plusDays(minDay).plus(minElapsed, ChronoUnit.SECONDS), minDist));
+
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);

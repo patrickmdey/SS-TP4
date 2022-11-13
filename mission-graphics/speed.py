@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import math
 import numpy as np
 
-min_date = '2023-05-08T21:40'
+min_date = '2025-01-10T02:50'
 dt = 300
 
 steps_per_day = math.ceil(24 * 60 * 60 / dt)
@@ -13,7 +13,7 @@ print()
 total_days = 0
 speeds = []
 day_steps = 1
-with open("../outFiles/sweep_mission_out.txt", "r") as mission_file:
+with open("../outFiles/e_sweep_mission_out.txt", "r") as mission_file:
     line = mission_file.readline()
     while line[:-1] != min_date:
         line = mission_file.readline()
@@ -24,7 +24,7 @@ with open("../outFiles/sweep_mission_out.txt", "r") as mission_file:
         count = int(line)
         mission_file.readline()
         for i in range(count):
-            [id, x, y, vx, vy, r] = mission_file.readline().split(",")
+            [id, x, y, vx, vy, r, _] = mission_file.readline().split(",")
             id = int(id)
             if id == 3:
                 speeds.append(math.sqrt(float(vx) ** 2 + float(vy) ** 2))

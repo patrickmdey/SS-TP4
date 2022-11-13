@@ -133,7 +133,7 @@ public class VenusVelocityAnalysis {
             hasToAppend = true;
             double minDist = Double.MAX_VALUE;
             boolean crashed = false;
-            for (int day = 0; day < 365 && !crashed; day++) { // todo hardcodeado
+            for (int day = 0; day < 365 && !crashed; day++) {
                 int elapsed = 0;
                 while (elapsed < 24 * 60 * 60) {
                     double currDist = Math.max(venus.getPosition().distanceTo(spaceship.getPosition())
@@ -154,7 +154,7 @@ public class VenusVelocityAnalysis {
                         outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, " + "%.16f, %.16f\n",
                                 body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius()));
                     }
-                    elapsed += MissionUtils.STEP; //TODO: estaba ni bien arrancaba el for. Checkear
+                    elapsed += MissionUtils.STEP;
                     outFile.flush();
                 }
             }

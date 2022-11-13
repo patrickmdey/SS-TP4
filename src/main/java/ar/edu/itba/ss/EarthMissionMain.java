@@ -117,7 +117,7 @@ public class EarthMissionMain {
                     if (currDist <= 0) {
                         System.out.println("Spaceship arrived to Earth");
                         crashed = true;
-                        break; // TODO ver si hacemos algo mas y si funca
+                        break;
                     }
 
                     MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
