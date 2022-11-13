@@ -3,12 +3,10 @@ from matplotlib import pyplot as plt
 import math
 import numpy as np
 
-min_date = '2025-01-10T02:50'
 dt = 300
 
 steps_per_day = math.ceil(24 * 60 * 60 / dt)
 print("Steps per day:", steps_per_day)
-print()
 
 total_days = 0
 speeds = []
@@ -16,21 +14,19 @@ day_steps = 1
 with open("../outFiles/e_sweep_velocity_out.txt", "r") as mission_file:
     line = mission_file.readline()
     while line:
-        print(line)
-        [vx, vy] = mission_file.readline().split(",")
+        [vx, vy] = line.split(",")
         
         speeds.append(math.sqrt(float(vx) ** 2 + float(vy) ** 2))
 
-        if (day_steps % steps_per_day == 0):
+        if (day_steps == steps_per_day):
             total_days += 1
             day_steps = 0
         
         day_steps += 1
-        
+
         line = mission_file.readline()
 
 mission_file.close()
-
 
 time_elapsed = dt * day_steps
 
