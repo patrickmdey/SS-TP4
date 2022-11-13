@@ -40,7 +40,7 @@ public class DampedOscillator {
         writer.write(String.format(Locale.ROOT, "%.16f %.16f\n", t, currR));
         while (t < 5) {
             nextR = IntegrationAlgorithms.verletR(currR, prevR, step, mass, f(currR, currV));
-            currV = (nextR - prevR) / (2 * step); // TODO capaz pasarla a utils
+            currV = (nextR - prevR) / (2 * step);
             prevR = currR;
             currR = nextR;
             t += step;
@@ -71,7 +71,7 @@ public class DampedOscillator {
 
             nextA = f(nextR, predV) / mass;
 
-            nextV = IntegrationAlgorithms.beemanV(currV, step, currA, prevA, nextA); //TODO: next A como se calcula? ver si se usa predV
+            nextV = IntegrationAlgorithms.beemanV(currV, step, currA, prevA, nextA);
             prevR = currR;
             currR = nextR;
 
