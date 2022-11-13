@@ -5,28 +5,28 @@ from matplotlib import pyplot as plt
 G = 6.693 * pow(10, -20)
 
 energies = []
-with open("../outFiles/energy_mission_out.txt", "r") as mission_file:
+with open("../outFiles/energy_out.txt", "r") as mission_file:
     line = mission_file.readline()
+    particles = np.zeros(shape=(4, 3))
+
     while line:
-        count = int(line)
 
         mission_file.readline()
-        particles = []
 
         energy = 0
-        for i in range(count):
+        for i in range(4):
             [id, x, y, vx, vy, r, m] = mission_file.readline().split(",")
 
             energy += 0.5 * float(m) * (float(vx) ** 2 + float(vy) ** 2)
-            particles.append((float(x), float(y), float(m)))
+            particles[i] = (float(x), float(y), float(m))
 
-        for i in range(count):
+        for i in range(4):
             (x1, y1, m1) = particles[i]
-            for j in range(i + 1, count):
+            for j in range(i + 1, 4):
                 (x2, y2, m2) = particles[j]
 
                 dist = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-                energy += 2 * (-G) * m1 * m2 / dist
+                energy += (-G) * m1 * m2 / dist
 
         energies.append(energy)
         line = mission_file.readline()

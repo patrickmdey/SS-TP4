@@ -11,15 +11,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class EnergyMain {
-    public static final double[] ALPHAS = new double[]{3.0 / 20, 251.0 / 360, 1, 11.0 / 18, 1.0 / 6, 1.0 / 60};
-
-    public static final double STATION_ORBIT_SPEED = 7.12;
-
-    public static final double STATION_ORBIT_HEIGHT = 1500;
-
     public static final int DATES_TO_TRY = 365;
-
-    public static boolean hasToAppend = false;
 
     public static void main(String[] args) {
         if (args.length != 1) {
@@ -28,7 +20,6 @@ public class EnergyMain {
         }
 
         MissionUtils.STEP = Integer.parseInt(args[0]);
-
         System.out.println("Step: " + MissionUtils.STEP);
 
         CelestialBody sun, earth, venus;
@@ -107,23 +98,21 @@ public class EnergyMain {
 
         MissionUtils.initializeRs(rx, ry, celestialBodies);
 
-        try (FileWriter outFile = new FileWriter("./outFiles/energy_mission_out.txt", hasToAppend)) {
-            hasToAppend = true;
-            for (int day = 0; day < DATES_TO_TRY; day++) {
-                int elapsed = 0;
-                while (elapsed < 24 * 60 * 60) {
-                    elapsed += MissionUtils.STEP;
-                
-                    MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
-
+        try (FileWriter outFile = new FileWriter("./outFiles/energy_out.txt", false)) {
+            int elapsed = 0;
+            while (elapsed < 24 * 60 * 60 * DATES_TO_TRY) {
+                if (elapsed % (24 * 60 * 60) == 0) {
                     outFile.write("4\n\n");
                     for (CelestialBody body : celestialBodies) {
-                        outFile.write(String.format(Locale.ROOT, "%d, %.16f, %.16f, %.16f, %.16f, %.16f, %.16f\n",
+                        outFile.write(String.format(Locale.ROOT, "%d, %f, %f, %f, %f, %f, %f\n",
                                 body.getId(), body.getPosition().getX(), body.getPosition().getY(), body.getVx(), body.getVy(), body.getRadius(), body.getMass()));
                     }
-                    
+
+                    MissionUtils.twoDimensionalGear(celestialBodies, rx, ry);
+
                     outFile.flush();
                 }
+                elapsed += MissionUtils.STEP;
             }
         } catch (IOException e) {
             e.printStackTrace();
